@@ -81,4 +81,12 @@ This document records durable discussion decisions and project progress. Use ISO
 - Summary: User clarified that V0 does not involve Agent capabilities. V0 only needs to write and verify whether phone-side automation scripts/prototypes can implement WeChat call detection, local whitelist checks, auto-answer, one-tap outbound call, and local logs. Agent Server, Bridge tool APIs, Agent tool calls, Safety Gate service flow, and device heartbeat belong to V1.
 - Artifacts: `docs/V0_AUTOMATION_VALIDATION.md`, `docs/ROADMAP.md`, `README.md`, `docs/ARCHITECTURE.md`, `docs/PROJECT_LOG.md`
 - Verification: V0 scope correction saved to local persistent memory and documented in repo.
-- Next step: Commit and push V0 scope documentation update.
+- Commit: `5f2613b Clarify V0 automation validation scope`
+- Result: Pushed to `origin/main`.
+
+### 2026-07-09T12:02:36+08:00 - V0 scope push result recorded
+
+- Category: workflow
+- Summary: Updated the project log to record that the V0 automation validation scope correction was committed and pushed.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: Follow-up log-only update prepared after `5f2613b` reached `origin/main`.

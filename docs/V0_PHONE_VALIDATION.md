@@ -63,6 +63,18 @@ App 内点击“刷新本地日志”即可查看最近日志。也可以通过 
 adb shell run-as com.grandmacallagent.bridge cat files/v0_actions.log
 ```
 
+仓库也提供了辅助脚本：
+
+```powershell
+.\scripts\v0_device_preflight.ps1
+.\scripts\v0_read_logs.ps1
+.\scripts\v0_clear_logs.ps1
+```
+
+- `v0_device_preflight.ps1`：检查设备连接、App 是否安装、无障碍和通知权限是否启用。
+- `v0_read_logs.ps1`：读取 `files/v0_actions.log`。
+- `v0_clear_logs.ps1`：清空 `files/v0_actions.log`。
+
 清空日志可点击 App 内“清空本地日志”。
 
 ## 失败排查

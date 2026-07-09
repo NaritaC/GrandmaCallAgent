@@ -95,6 +95,8 @@ uvicorn grandma_agent_server.main:app --reload --host 0.0.0.0 --port 8000
 - [可参考项目调研](docs/REFERENCE_PROJECTS.md)
 - [项目进展日志](docs/PROJECT_LOG.md)
 
+V0 手机验证辅助脚本位于 `scripts/`，包括设备预检、读取日志和清空日志。
+
 ## 当前限制
 
 - 微信 UI 文案可能因版本、语言、系统 ROM 变化，需要在真机上校准按钮文本。

@@ -115,3 +115,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Summary: Updated the project log to record that the V0 local automation prototype and phone validation guide were committed and pushed.
 - Artifacts: `docs/PROJECT_LOG.md`
 - Verification: Follow-up log-only update prepared after `b68559d` reached `origin/main`.
+
+### 2026-07-09T17:30:00+08:00 - V0 ADB validation helpers added
+
+- Category: tooling
+- Summary: Added PowerShell helper scripts for phone-side V0 validation: device preflight, local log reading, and local log clearing. The scripts do not perform WeChat UI automation; they only inspect device/App state and logs through ADB.
+- Artifacts: `scripts/v0_device_preflight.ps1`, `scripts/v0_read_logs.ps1`, `scripts/v0_clear_logs.ps1`, `docs/V0_PHONE_VALIDATION.md`, `README.md`
+- Verification: PowerShell scripts parsed successfully with `[scriptblock]::Create`; `git diff --check` passed. Runtime ADB execution still requires a phone and local Android Platform Tools.
+- Next step: Commit and push validation helper scripts.

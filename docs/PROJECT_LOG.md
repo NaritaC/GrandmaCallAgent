@@ -65,4 +65,12 @@ This document records durable discussion decisions and project progress. Use ISO
 - Summary: User defined the product evolution route. Current implementation is V0 local automation: WeChat incoming call detection, whitelist check, auto-answer, one-tap outbound call, and local logs. V1 adds cloud/local Agent Server, Bridge tool APIs, `answer_wechat_call` / `make_wechat_video_call`, Safety Gate, and device heartbeat. V2 adds voice interaction with ASR and intent detection. V3 expands into a family-care AI-for-good product with console, remote status, missed-call reminders, permission/safety explanations, and extensions for medication, help, and companionship.
 - Artifacts: `docs/ROADMAP.md`, `README.md`, `docs/ARCHITECTURE.md`, `docs/PROJECT_LOG.md`
 - Verification: Roadmap saved to local persistent memory and documented in repo.
-- Next step: Commit and push roadmap documentation update.
+- Commit: `997b7a7 Document V0 to V3 roadmap`
+- Result: Pushed to `origin/main`.
+
+### 2026-07-09T11:57:43+08:00 - Roadmap push result recorded
+
+- Category: workflow
+- Summary: Updated the project log to record that the V0-V3 roadmap documentation was committed and pushed.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: Follow-up log-only update prepared after `997b7a7` reached `origin/main`.

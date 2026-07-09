@@ -90,6 +90,18 @@ class MainActivity : Activity() {
             text = "一键拨出微信视频"
             setOnClickListener { startOutbound("video") }
         }
+        val cancelOutboundButton = Button(this).apply {
+            text = "停止一键拨出"
+            setOnClickListener {
+                val stopped = V0AutomationRuntime.cancelOutboundCall(this@MainActivity)
+                Toast.makeText(
+                    this@MainActivity,
+                    if (stopped) "已停止一键拨出" else "当前没有待停止的一键拨出",
+                    Toast.LENGTH_SHORT,
+                ).show()
+                refreshLogs()
+            }
+        }
         val accessibilityButton = Button(this).apply {
             text = "打开无障碍服务设置"
             setOnClickListener { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
@@ -123,6 +135,7 @@ class MainActivity : Activity() {
             outboundInput,
             voiceButton,
             videoButton,
+            cancelOutboundButton,
             accessibilityButton,
             notificationButton,
             refreshLogButton,

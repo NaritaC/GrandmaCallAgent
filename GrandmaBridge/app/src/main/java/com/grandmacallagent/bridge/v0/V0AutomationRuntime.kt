@@ -79,4 +79,12 @@ object V0AutomationRuntime {
         )
         return true
     }
+
+    fun cancelOutboundCall(context: Context): Boolean {
+        LocalActionLogger.append(context, "outbound_cancel_requested", "source=main_activity")
+        return GrandmaAccessibilityService.cancelPendingOutbound(
+            context = context,
+            reason = "user_requested",
+        )
+    }
 }

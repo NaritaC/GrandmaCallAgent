@@ -10,7 +10,7 @@
 - 测试期间不要打开微信支付、红包、转账、银行卡、删除消息等页面。
 - 白名单只填写真实微信显示名，避免使用过短或容易撞名的昵称。
 - 一键拨出是 UI 自动化原型，微信版本、语言、ROM 都可能导致失败；先在旁边观察屏幕测试。
-- 如果本地日志出现 `local_reject_high_risk_keyword`、`outbound_rejected` 或误触迹象，立即关闭无障碍服务。
+- 如果本地日志出现 `local_reject_high_risk_keyword`、`outbound_rejected` 或误触迹象，先点击 App 内“停止一键拨出”；如仍无法确认安全，立即关闭无障碍服务。
 
 ## 安装与授权
 
@@ -90,8 +90,21 @@
 2. 在“一键拨出联系人”输入框填写该联系人微信显示名。
 3. 点击“一键拨出微信语音”或“一键拨出微信视频”。
 4. App 会打开微信并尝试按 UI 流程搜索联系人、进入聊天、打开音视频通话菜单。
-5. 全程观察屏幕；如果进入错误联系人或错误页面，立即按返回键或关闭无障碍服务。
+5. 全程观察屏幕；如果进入错误联系人或错误页面，立即回到 App 点击“停止一键拨出”，必要时按返回键或关闭无障碍服务。
 6. 期望日志按顺序出现 `outbound_requested`、`outbound_launch_wechat`、若干 `outbound_click_*` 或 `outbound_set_search_text`，最终出现 `outbound_click_final_call`。
+
+### 一键拨出停止验证
+
+1. 点击“一键拨出微信语音”或“一键拨出微信视频”后，立即回到 App。
+2. 点击“停止一键拨出”。
+3. 期望日志包含 `outbound_cancel_requested` 和 `outbound_cancelled`。
+4. 如果没有待停止任务，期望日志包含 `outbound_cancel_ignored reason=no_pending_outbound`。
+
+可用脚本断言日志：
+
+```powershell
+.\scripts\v0_assert_log.ps1 -Required outbound_cancel_requested,outbound_cancelled
+```
 
 ## 日志获取
 

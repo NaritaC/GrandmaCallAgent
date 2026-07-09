@@ -297,6 +297,23 @@ class GrandmaAccessibilityService : AccessibilityService() {
             LocalActionLogger.append(context, "outbound_launch_wechat", "contact=$contactName callType=$callType")
         }
 
+        fun cancelPendingOutbound(context: Context, reason: String): Boolean {
+            val pending = pendingOutbound
+            if (pending == null) {
+                LocalActionLogger.append(context, "outbound_cancel_ignored", "reason=no_pending_outbound")
+                return false
+            }
+
+            pendingOutbound = null
+            LocalActionLogger.append(
+                context,
+                "outbound_cancelled",
+                "contact=${pending.contactName} callType=${pending.callType} reason=$reason",
+            )
+            TtsSpeaker.speak("已停止一键拨出。")
+            return true
+        }
+
         private fun recentlyAccepted(contactName: String?): Boolean {
             val normalized = normalizeContact(contactName)
             if (normalized.isBlank()) return false

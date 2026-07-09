@@ -154,3 +154,12 @@ This document records durable discussion decisions and project progress. Use ISO
 - Summary: Added a local V0 auto-answer master switch that defaults to off, blocks even whitelist calls until manually enabled in the App, and logs `auto_answer_disabled`. Added duplicate suppression after a successful accept to reduce repeated actions from overlapping accessibility and notification triggers.
 - Artifacts: `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/v0/LocalV0Settings.kt`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/v0/V0AutomationRuntime.kt`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/MainActivity.kt`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/accessibility/GrandmaAccessibilityService.kt`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `README.md`, `docs/PROJECT_LOG.md`
 - Verification: Pending local static checks in this environment. Android compile and phone validation still require Android Studio/Gradle and a test phone.
+
+### 2026-07-09T17:43:31+08:00 - V0 auto-answer safety switch pushed
+
+- Category: workflow
+- Summary: Pushed the V0 auto-answer safety switch, default-off behavior, duplicate accept suppression, and validation documentation updates to GitHub.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: `git diff --check` and `git diff --cached --check` passed before commit. Android compile and phone validation remain external follow-up steps because this shell has no Gradle wrapper, global `gradle`, or `adb`.
+- Commit: `0267230 Add V0 auto-answer safety switch`
+- Result: Pushed to `origin/main`.

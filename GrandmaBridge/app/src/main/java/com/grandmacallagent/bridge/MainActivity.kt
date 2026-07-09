@@ -6,16 +6,19 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.Gravity
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import com.grandmacallagent.bridge.v0.LocalActionLogger
+import com.grandmacallagent.bridge.v0.LocalV0Settings
 import com.grandmacallagent.bridge.v0.LocalWhitelistStore
 import com.grandmacallagent.bridge.v0.V0AutomationRuntime
 
 class MainActivity : Activity() {
+    private lateinit var autoAnswerCheckBox: CheckBox
     private lateinit var whitelistInput: EditText
     private lateinit var outboundInput: EditText
     private lateinit var logView: TextView
@@ -48,6 +51,19 @@ class MainActivity : Activity() {
         val description = TextView(this).apply {
             text = "V0：本地自动化脚本验证。只处理微信通话白名单接听和用户主动触发的一键拨出。"
             textSize = 15f
+        }
+        autoAnswerCheckBox = CheckBox(this).apply {
+            text = "启用白名单来电自动接听（测试时再打开）"
+            isChecked = LocalV0Settings.isAutoAnswerEnabled(this@MainActivity)
+            setOnCheckedChangeListener { _, checked ->
+                LocalV0Settings.setAutoAnswerEnabled(this@MainActivity, checked)
+                LocalActionLogger.append(this@MainActivity, "settings", "auto_answer_enabled=$checked")
+                Toast.makeText(
+                    this@MainActivity,
+                    if (checked) "自动接听已启用" else "自动接听已关闭",
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
         }
         whitelistInput = EditText(this).apply {
             hint = "白名单联系人，每行一个微信显示名"
@@ -101,6 +117,7 @@ class MainActivity : Activity() {
         listOf(
             title,
             description,
+            autoAnswerCheckBox,
             whitelistInput,
             saveWhitelistButton,
             outboundInput,

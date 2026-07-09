@@ -43,6 +43,15 @@ class GrandmaAccessibilityService : AccessibilityService() {
     override fun onInterrupt() = Unit
 
     private fun acceptWeChatCallLocal(contactName: String?, source: String) {
+        if (recentlyAccepted(contactName)) {
+            LocalActionLogger.append(
+                applicationContext,
+                "accept_ignored",
+                "source=$source contact=${contactName.orEmpty()} reason=recent_success_duplicate",
+            )
+            return
+        }
+
         val root = rootInActiveWindow
         val packageName = root?.packageName?.toString()
         val texts = AccessibilityNodeUtils.collectTexts(root)
@@ -75,6 +84,7 @@ class GrandmaAccessibilityService : AccessibilityService() {
             "contact=${contactName.orEmpty()} reason=$reason",
         )
         if (clicked) {
+            rememberAccepted(contactName)
             TtsSpeaker.speak("已接听微信来电。")
         }
     }
@@ -221,9 +231,12 @@ class GrandmaAccessibilityService : AccessibilityService() {
         private const val WECHAT_PACKAGE = "com.tencent.mm"
         private const val OUTBOUND_TIMEOUT_MS = 90_000L
         private const val OUTBOUND_STEP_INTERVAL_MS = 1_200L
+        private const val ACCEPT_DUPLICATE_WINDOW_MS = 15_000L
         private const val MAX_OUTBOUND_FAILURES = 12
         private var instance: WeakReference<GrandmaAccessibilityService>? = null
         private var pendingOutbound: PendingOutboundCall? = null
+        private var lastAcceptedContact: String? = null
+        private var lastAcceptedAtMs: Long = 0L
 
         private val SEARCH_LABELS = listOf("搜索", "Search")
         private val MORE_MENU_LABELS = listOf("更多功能按钮", "更多功能", "更多", "+")
@@ -282,6 +295,22 @@ class GrandmaAccessibilityService : AccessibilityService() {
             launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(launchIntent)
             LocalActionLogger.append(context, "outbound_launch_wechat", "contact=$contactName callType=$callType")
+        }
+
+        private fun recentlyAccepted(contactName: String?): Boolean {
+            val normalized = normalizeContact(contactName)
+            if (normalized.isBlank()) return false
+            val last = lastAcceptedContact ?: return false
+            return last == normalized && SystemClock.elapsedRealtime() - lastAcceptedAtMs < ACCEPT_DUPLICATE_WINDOW_MS
+        }
+
+        private fun rememberAccepted(contactName: String?) {
+            lastAcceptedContact = normalizeContact(contactName)
+            lastAcceptedAtMs = SystemClock.elapsedRealtime()
+        }
+
+        private fun normalizeContact(contactName: String?): String {
+            return contactName.orEmpty().filterNot { it.isWhitespace() }.lowercase()
         }
     }
 

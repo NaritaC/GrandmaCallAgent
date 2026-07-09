@@ -25,6 +25,11 @@ object V0AutomationRuntime {
             "source=$source contact=${contactName.orEmpty()} callType=$normalizedCallType",
         )
 
+        if (!LocalV0Settings.isAutoAnswerEnabled(context)) {
+            LocalActionLogger.append(context, "incoming_rejected", "reason=auto_answer_disabled")
+            return
+        }
+
         if (normalizedCallType !in allowedCallTypes) {
             LocalActionLogger.append(context, "incoming_rejected", "reason=unsupported_call_type callType=$normalizedCallType")
             return

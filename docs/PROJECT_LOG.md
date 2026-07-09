@@ -147,3 +147,10 @@ This document records durable discussion decisions and project progress. Use ISO
 - Summary: Updated the project log to record that the V0 WeChat caller parsing improvement was committed and pushed.
 - Artifacts: `docs/PROJECT_LOG.md`
 - Verification: Follow-up log-only update prepared after `6e44049` reached `origin/main`.
+
+### 2026-07-09T17:41:46+08:00 - V0 auto-answer safety switch added
+
+- Category: implementation
+- Summary: Added a local V0 auto-answer master switch that defaults to off, blocks even whitelist calls until manually enabled in the App, and logs `auto_answer_disabled`. Added duplicate suppression after a successful accept to reduce repeated actions from overlapping accessibility and notification triggers.
+- Artifacts: `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/v0/LocalV0Settings.kt`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/v0/V0AutomationRuntime.kt`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/MainActivity.kt`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/accessibility/GrandmaAccessibilityService.kt`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `README.md`, `docs/PROJECT_LOG.md`
+- Verification: Pending local static checks in this environment. Android compile and phone validation still require Android Studio/Gradle and a test phone.

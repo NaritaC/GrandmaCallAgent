@@ -1,13 +1,13 @@
 # GrandmaCallAgent
 
-GrandmaCallAgent 是一个面向高龄老人的安卓手机通话 Agent 项目。当前正在实现 `V0: 本地自动化`：
+GrandmaCallAgent 是一个面向高龄老人的安卓手机通话 Agent 项目。当前正在实现 `V0: 本地自动化脚本验证`，此阶段不涉及 Agent 能力：
 
 - 微信语音/视频来电的白名单自动接听。
 - 本地白名单判断和本地日志。
 - 一键拨出微信视频/语音通话。
 - 明确禁止支付、转账、红包、删除消息等非通话动作。
 
-当前产品路线以 [V0-V3 演进路线](docs/ROADMAP.md) 为准。仓库中已有的云端服务、WebSocket Bridge、云端 `SafetyGate` 和设备心跳是 `V1: Agent 化` 的骨架与预研基础。
+当前产品路线以 [V0-V3 演进路线](docs/ROADMAP.md) 为准。仓库中已有的云端服务、WebSocket Bridge、云端 `SafetyGate` 和设备心跳是 `V1: Agent 化` 的骨架与预研基础；V0 只写并验证手机本地自动化脚本/原型能否实现。
 
 ## 项目结构
 
@@ -90,6 +90,7 @@ uvicorn grandma_agent_server.main:app --reload --host 0.0.0.0 --port 8000
 - [测试清单](docs/TEST_CHECKLIST.md)
 - [本地运行方式](docs/LOCAL_RUN.md)
 - [演进路线](docs/ROADMAP.md)
+- [V0 自动化验证计划](docs/V0_AUTOMATION_VALIDATION.md)
 - [可参考项目调研](docs/REFERENCE_PROJECTS.md)
 - [项目进展日志](docs/PROJECT_LOG.md)
 

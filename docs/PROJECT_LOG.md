@@ -97,6 +97,8 @@ This document records durable discussion decisions and project progress. Use ISO
 - Summary: Implemented the V0 phone-side local automation prototype: local whitelist storage, local action log, V0 runtime, local WeChat incoming-call handling, guarded accept-click flow, guarded one-tap outbound call state machine, V0 validation panel in Android UI, and phone validation guide with safety warnings.
 - Artifacts: `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/v0/`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/MainActivity.kt`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/accessibility/GrandmaAccessibilityService.kt`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `README.md`, `AGENTS.md`
 - Verification: `git diff --check` passed. Local Android compile was not run because this environment has no Gradle wrapper, no global `gradle`, and no `kotlinc`.
+- Commit: `b68559d Implement V0 local automation prototype`
+- Result: Pushed to `origin/main`.
 - Next step: Build in Android Studio and run the V0 phone validation checklist on a test phone with the target WeChat version.
 
 ### 2026-07-09T17:24:39+08:00 - V0 outbound safety tightened
@@ -105,3 +107,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Summary: Tightened the one-tap outbound state machine so call-related buttons are only clicked after the target contact is visible and the current WeChat UI also shows chat-screen or call-menu signals. If the contact is only visible in a list/search result, the automation may click the contact but not call buttons.
 - Artifacts: `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/accessibility/GrandmaAccessibilityService.kt`, `docs/PROJECT_LOG.md`
 - Verification: `git diff --check` passed. Android compile still requires Android Studio because no Gradle/Kotlin compiler is available in this shell.
+- Commit: included in `b68559d Implement V0 local automation prototype`
+
+### 2026-07-09T17:25:53+08:00 - V0 prototype push result recorded
+
+- Category: workflow
+- Summary: Updated the project log to record that the V0 local automation prototype and phone validation guide were committed and pushed.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: Follow-up log-only update prepared after `b68559d` reached `origin/main`.

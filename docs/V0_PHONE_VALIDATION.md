@@ -15,14 +15,22 @@
 ## 安装与授权
 
 1. 用 Android Studio 打开 `GrandmaBridge/`。
-2. 连接测试手机，安装运行 `GrandmaBridge`。
-3. 打开 App，进入 V0 验证面板。
-4. 保持“启用白名单来电自动接听”关闭，先完成白名单和权限配置。
-5. 在白名单输入框中填写允许自动接听的微信显示名，每行一个。
-6. 点击“保存本地白名单”。
-7. 点击“打开无障碍服务设置”，启用 `GrandmaBridge`。
-8. 点击“打开通知使用权设置”，启用 `GrandmaBridge`。
-9. 准备开始来电测试时，再回到 App 打开“启用白名单来电自动接听”。
+2. 连接测试手机，安装运行 `GrandmaBridge`。也可以在已配置 Gradle 和 ADB 的电脑上运行：
+
+```powershell
+.\scripts\v0_build_install.ps1
+```
+
+该脚本只构建、安装并启动 App，不会操作微信。
+
+3. 如果脚本提示没有 Gradle wrapper 或全局 `gradle`，请先用 Android Studio 打开 `GrandmaBridge/` 并从 IDE 运行 App。
+4. 打开 App，进入 V0 验证面板。
+5. 保持“启用白名单来电自动接听”关闭，先完成白名单和权限配置。
+6. 在白名单输入框中填写允许自动接听的微信显示名，每行一个。
+7. 点击“保存本地白名单”。
+8. 点击“打开无障碍服务设置”，启用 `GrandmaBridge`。
+9. 点击“打开通知使用权设置”，启用 `GrandmaBridge`。
+10. 准备开始来电测试时，再回到 App 打开“启用白名单来电自动接听”。
 
 ## 自动接听验证
 
@@ -34,12 +42,24 @@
 4. 回到 App 点击“刷新本地日志”。
 5. 期望日志包含 `incoming_detected`、`incoming_allowed`、`accept_success`。
 
+可用脚本断言日志：
+
+```powershell
+.\scripts\v0_assert_log.ps1 -Required incoming_detected,incoming_allowed,accept_success
+```
+
 ### 自动接听总开关
 
 1. 关闭“启用白名单来电自动接听”。
 2. 让白名单联系人发起微信语音或视频通话。
 3. 期望手机不自动接听。
 4. 日志应包含 `incoming_rejected reason=auto_answer_disabled`。
+
+可用脚本断言日志：
+
+```powershell
+.\scripts\v0_assert_log.ps1 -Required auto_answer_disabled -Forbidden accept_success
+```
 
 ### 白名单视频来电
 
@@ -50,6 +70,12 @@
 1. 让非白名单联系人发起微信语音或视频通话。
 2. 期望手机不自动接听。
 3. 日志应包含 `incoming_rejected reason=contact_not_in_local_whitelist`。
+
+可用脚本断言日志：
+
+```powershell
+.\scripts\v0_assert_log.ps1 -Required contact_not_in_local_whitelist -Forbidden accept_success
+```
 
 ### 高风险页面负向测试
 
@@ -78,16 +104,20 @@ adb shell run-as com.grandmacallagent.bridge cat files/v0_actions.log
 仓库也提供了辅助脚本：
 
 ```powershell
+.\scripts\v0_build_install.ps1
 .\scripts\v0_device_preflight.ps1
 .\scripts\v0_read_logs.ps1
 .\scripts\v0_clear_logs.ps1
 .\scripts\v0_collect_evidence.ps1
+.\scripts\v0_assert_log.ps1 -Required incoming_detected
 ```
 
+- `v0_build_install.ps1`：构建 debug APK、安装到连接的 Android 设备并启动 App。
 - `v0_device_preflight.ps1`：检查设备连接、App 是否安装、无障碍和通知权限是否启用。
 - `v0_read_logs.ps1`：读取 `files/v0_actions.log`。
 - `v0_clear_logs.ps1`：清空 `files/v0_actions.log`。
 - `v0_collect_evidence.ps1`：把设备信息、App/微信版本、权限状态和 V0 本地日志保存到 `artifacts/v0-evidence/`。该目录已被 `.gitignore` 忽略，不要提交包含真实联系人昵称的证据包。
+- `v0_assert_log.ps1`：检查日志中是否包含必需关键字、是否不包含禁止关键字；断言失败时退出码为 `1`。
 
 如果需要校准微信 UI 文本，可以在安全页面上额外运行：
 

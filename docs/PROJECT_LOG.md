@@ -179,3 +179,10 @@ This document records durable discussion decisions and project progress. Use ISO
 - Verification: All PowerShell scripts parsed successfully; `git diff --check` and `git diff --cached --check` passed before commit.
 - Commit: `b7c4fa6 Add V0 evidence collection workflow`
 - Result: Pushed to `origin/main`.
+
+### 2026-07-09T17:54:14+08:00 - V0 install and log assertion helpers added
+
+- Category: tooling
+- Summary: Added helper scripts to build/install/launch GrandmaBridge on a connected Android device and to assert required or forbidden V0 log keywords after each phone-test scenario. Updated phone validation guidance and checklist to use these scripts.
+- Artifacts: `scripts/v0_build_install.ps1`, `scripts/v0_assert_log.ps1`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `README.md`, `docs/PROJECT_LOG.md`
+- Verification: Pending final local script parsing and diff checks. Runtime build/install/log assertion still require Gradle/ADB and a connected test phone.

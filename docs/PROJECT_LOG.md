@@ -202,3 +202,12 @@ This document records durable discussion decisions and project progress. Use ISO
 - Summary: Added an App-side “停止一键拨出” control that cancels pending outbound automation, logs `outbound_cancel_requested`, `outbound_cancelled`, or `outbound_cancel_ignored`, and updates the phone validation guide with a stop-scenario assertion.
 - Artifacts: `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/MainActivity.kt`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/v0/V0AutomationRuntime.kt`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/accessibility/GrandmaAccessibilityService.kt`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `docs/PROJECT_LOG.md`
 - Verification: Pending local static checks. Android runtime validation still requires a connected phone.
+
+### 2026-07-09T18:00:58+08:00 - V0 outbound cancel control pushed
+
+- Category: workflow
+- Summary: Pushed the V0 one-tap outbound cancel control and related validation documentation to GitHub.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: All PowerShell scripts parsed successfully; `git diff --check` and `git diff --cached --check` passed before commit. Android runtime validation still requires a connected phone.
+- Commit: `ec210be Add V0 outbound cancel control`
+- Result: Pushed to `origin/main`.

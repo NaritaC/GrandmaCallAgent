@@ -88,6 +88,7 @@ uvicorn grandma_agent_server.main:app --reload --host 0.0.0.0 --port 8000
 - [测试清单](docs/TEST_CHECKLIST.md)
 - [本地运行方式](docs/LOCAL_RUN.md)
 - [可参考项目调研](docs/REFERENCE_PROJECTS.md)
+- [项目进展日志](docs/PROJECT_LOG.md)
 
 ## 当前限制
 

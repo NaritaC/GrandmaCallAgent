@@ -48,6 +48,10 @@ The current history uses short imperative commit messages, for example `Add refe
 
 All high-risk actions must pass `SafetyGate`. Do not add payment, transfer, red packet, message deletion, message sending, friend management, or chat scraping actions. Runtime secrets and real whitelist data must stay out of Git; use `GrandmaAgentServer/storage/whitelist.json` locally.
 
+## Progress Log Workflow
+
+After each meaningful user decision, implementation step, verification result, or push, append an event to `docs/PROJECT_LOG.md`. Each entry must include an ISO 8601 timestamp with timezone, a short category, a concise summary, affected artifacts, verification status, and next step when relevant. Do not log secrets, real whitelist data, private contact names, tokens, or raw private logs.
+
 ## Agent 八荣八耻
 
 - 以暗猜接口为耻，以认真查阅为荣。

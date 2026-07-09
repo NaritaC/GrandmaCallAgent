@@ -92,10 +92,11 @@ uvicorn grandma_agent_server.main:app --reload --host 0.0.0.0 --port 8000
 - [演进路线](docs/ROADMAP.md)
 - [V0 自动化验证计划](docs/V0_AUTOMATION_VALIDATION.md)
 - [V0 手机验证指南](docs/V0_PHONE_VALIDATION.md)
+- [V0 验证记录模板](docs/V0_TEST_RECORD_TEMPLATE.md)
 - [可参考项目调研](docs/REFERENCE_PROJECTS.md)
 - [项目进展日志](docs/PROJECT_LOG.md)
 
-V0 手机验证辅助脚本位于 `scripts/`，包括设备预检、读取日志和清空日志。
+V0 手机验证辅助脚本位于 `scripts/`，包括设备预检、读取日志、清空日志和采集验证证据包。
 
 安全默认值：V0 自动接听总开关默认关闭。保存白名单并开启系统权限后，仍需在 App 内手动打开“启用白名单来电自动接听”才会自动接听。
 

@@ -2,6 +2,8 @@
 
 本文用于验证 V0 本地自动化脚本/原型，不验证 V1 Agent 能力。测试前建议使用备用手机或测试微信号，先只配置 1 个可信家属联系人。
 
+建议用 [V0 验证记录模板](V0_TEST_RECORD_TEMPLATE.md) 记录每次真机结果。记录中只写联系人代号，不写真实微信昵称。
+
 ## 安全警示
 
 - 不要在含有真实资金风险的微信账号上直接首测。
@@ -79,13 +81,30 @@ adb shell run-as com.grandmacallagent.bridge cat files/v0_actions.log
 .\scripts\v0_device_preflight.ps1
 .\scripts\v0_read_logs.ps1
 .\scripts\v0_clear_logs.ps1
+.\scripts\v0_collect_evidence.ps1
 ```
 
 - `v0_device_preflight.ps1`：检查设备连接、App 是否安装、无障碍和通知权限是否启用。
 - `v0_read_logs.ps1`：读取 `files/v0_actions.log`。
 - `v0_clear_logs.ps1`：清空 `files/v0_actions.log`。
+- `v0_collect_evidence.ps1`：把设备信息、App/微信版本、权限状态和 V0 本地日志保存到 `artifacts/v0-evidence/`。该目录已被 `.gitignore` 忽略，不要提交包含真实联系人昵称的证据包。
+
+如果需要校准微信 UI 文本，可以在安全页面上额外运行：
+
+```powershell
+.\scripts\v0_collect_evidence.ps1 -IncludeUiDump
+```
+
+`-IncludeUiDump` 会导出当前屏幕可见文本，可能包含聊天内容或联系人昵称，只能在测试账号和可控页面使用。
 
 清空日志可点击 App 内“清空本地日志”。
+
+## 建议验证节奏
+
+1. 每个关键场景前先清空 V0 日志。
+2. 执行一个场景后先在 App 内刷新日志，确认关键字是否出现。
+3. 再运行 `.\scripts\v0_collect_evidence.ps1` 采集证据包。
+4. 将证据包目录名写入本地验证记录，不要把真实日志内容写入 `docs/PROJECT_LOG.md`。
 
 ## 失败排查
 

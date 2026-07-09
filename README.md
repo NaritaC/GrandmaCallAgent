@@ -91,6 +91,7 @@ uvicorn grandma_agent_server.main:app --reload --host 0.0.0.0 --port 8000
 - [本地运行方式](docs/LOCAL_RUN.md)
 - [演进路线](docs/ROADMAP.md)
 - [V0 自动化验证计划](docs/V0_AUTOMATION_VALIDATION.md)
+- [V0 手机验证指南](docs/V0_PHONE_VALIDATION.md)
 - [可参考项目调研](docs/REFERENCE_PROJECTS.md)
 - [项目进展日志](docs/PROJECT_LOG.md)
 

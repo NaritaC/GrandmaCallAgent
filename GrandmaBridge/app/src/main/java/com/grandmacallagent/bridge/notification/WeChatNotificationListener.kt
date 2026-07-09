@@ -3,14 +3,12 @@ package com.grandmacallagent.bridge.notification
 import android.app.Notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import com.grandmacallagent.bridge.runtime.BridgeRuntime
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
+import com.grandmacallagent.bridge.v0.V0AutomationRuntime
 
 class WeChatNotificationListener : NotificationListenerService() {
     override fun onListenerConnected() {
         super.onListenerConnected()
-        BridgeRuntime.start(applicationContext)
+        V0AutomationRuntime.start(applicationContext)
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
@@ -23,14 +21,11 @@ class WeChatNotificationListener : NotificationListenerService() {
 
         if (!CallNotificationParser.isIncomingWeChatCall(fullText)) return
 
-        BridgeRuntime.sendEvent(
-            "incoming_wechat_call",
-            buildJsonObject {
-                put("app_package", WECHAT_PACKAGE)
-                put("contact_name", CallNotificationParser.inferContactName(title, text))
-                put("call_type", CallNotificationParser.inferCallType(fullText))
-                put("source", "notification")
-            },
+        V0AutomationRuntime.onIncomingWeChatCall(
+            context = applicationContext,
+            contactName = CallNotificationParser.inferContactName(title, text),
+            callType = CallNotificationParser.inferCallType(fullText),
+            source = "notification",
         )
     }
 

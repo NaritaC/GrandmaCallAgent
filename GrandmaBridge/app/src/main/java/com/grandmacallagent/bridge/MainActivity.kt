@@ -8,18 +8,32 @@ import android.view.Gravity
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
-import com.grandmacallagent.bridge.config.BridgeConfig
-import com.grandmacallagent.bridge.runtime.BridgeRuntime
+import android.widget.Toast
+import com.grandmacallagent.bridge.v0.LocalActionLogger
+import com.grandmacallagent.bridge.v0.LocalWhitelistStore
+import com.grandmacallagent.bridge.v0.V0AutomationRuntime
 
 class MainActivity : Activity() {
+    private lateinit var whitelistInput: EditText
+    private lateinit var outboundInput: EditText
+    private lateinit var logView: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        BridgeRuntime.start(applicationContext)
+        V0AutomationRuntime.start(applicationContext)
         setContentView(buildContent())
     }
 
-    private fun buildContent(): LinearLayout {
+    override fun onResume() {
+        super.onResume()
+        if (::logView.isInitialized) {
+            refreshLogs()
+        }
+    }
+
+    private fun buildContent(): ScrollView {
         val padding = (24 * resources.displayMetrics.density).toInt()
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -32,20 +46,33 @@ class MainActivity : Activity() {
             textSize = 24f
         }
         val description = TextView(this).apply {
-            text = "第一阶段只处理微信语音/视频来电白名单自动接听。"
+            text = "V0：本地自动化脚本验证。只处理微信通话白名单接听和用户主动触发的一键拨出。"
             textSize = 15f
         }
-        val serverInput = EditText(this).apply {
-            hint = "WebSocket 服务地址"
-            setSingleLine(true)
-            setText(BridgeConfig.serverBaseUrl(this@MainActivity))
+        whitelistInput = EditText(this).apply {
+            hint = "白名单联系人，每行一个微信显示名"
+            minLines = 3
+            setText(LocalWhitelistStore.displayText(this@MainActivity))
         }
-        val saveButton = Button(this).apply {
-            text = "保存服务地址并重连"
+        val saveWhitelistButton = Button(this).apply {
+            text = "保存本地白名单"
             setOnClickListener {
-                BridgeConfig.saveServerBaseUrl(this@MainActivity, serverInput.text.toString())
-                BridgeRuntime.restart(applicationContext)
+                LocalWhitelistStore.save(this@MainActivity, whitelistInput.text.toString())
+                LocalActionLogger.append(this@MainActivity, "settings", "local_whitelist_saved")
+                Toast.makeText(this@MainActivity, "白名单已保存", Toast.LENGTH_SHORT).show()
             }
+        }
+        outboundInput = EditText(this).apply {
+            hint = "一键拨出联系人，必须在白名单内"
+            setSingleLine(true)
+        }
+        val voiceButton = Button(this).apply {
+            text = "一键拨出微信语音"
+            setOnClickListener { startOutbound("voice") }
+        }
+        val videoButton = Button(this).apply {
+            text = "一键拨出微信视频"
+            setOnClickListener { startOutbound("video") }
         }
         val accessibilityButton = Button(this).apply {
             text = "打开无障碍服务设置"
@@ -55,8 +82,36 @@ class MainActivity : Activity() {
             text = "打开通知使用权设置"
             setOnClickListener { startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)) }
         }
+        val refreshLogButton = Button(this).apply {
+            text = "刷新本地日志"
+            setOnClickListener { refreshLogs() }
+        }
+        val clearLogButton = Button(this).apply {
+            text = "清空本地日志"
+            setOnClickListener {
+                LocalActionLogger.clear(this@MainActivity)
+                refreshLogs()
+            }
+        }
+        logView = TextView(this).apply {
+            textSize = 12f
+            text = LocalActionLogger.read(this@MainActivity)
+        }
 
-        listOf(title, description, serverInput, saveButton, accessibilityButton, notificationButton).forEach {
+        listOf(
+            title,
+            description,
+            whitelistInput,
+            saveWhitelistButton,
+            outboundInput,
+            voiceButton,
+            videoButton,
+            accessibilityButton,
+            notificationButton,
+            refreshLogButton,
+            clearLogButton,
+            logView,
+        ).forEach {
             root.addView(
                 it,
                 LinearLayout.LayoutParams(
@@ -65,6 +120,22 @@ class MainActivity : Activity() {
                 ).apply { bottomMargin = padding / 2 },
             )
         }
-        return root
+        return ScrollView(this).apply { addView(root) }
+    }
+
+    private fun startOutbound(callType: String) {
+        val started = V0AutomationRuntime.startOutboundCall(
+            context = this,
+            contactName = outboundInput.text.toString(),
+            callType = callType,
+        )
+        if (started) {
+            Toast.makeText(this, "已打开微信并尝试拨出，请观察日志", Toast.LENGTH_SHORT).show()
+        }
+        refreshLogs()
+    }
+
+    private fun refreshLogs() {
+        logView.text = LocalActionLogger.read(this)
     }
 }

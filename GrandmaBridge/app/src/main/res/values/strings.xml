@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GrandmaBridge</string>
-    <string name="accessibility_description">仅用于识别微信语音或视频来电，并在白名单安全校验通过后点击接听。</string>
+    <string name="accessibility_description">仅用于 V0 本地验证：识别微信语音或视频来电，在本地白名单和安全校验通过后点击接听，并验证用户主动触发的一键拨出。</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.grandmacallagent.bridge.accessibility
 
+import android.os.Bundle
 import android.view.accessibility.AccessibilityNodeInfo
 
 object AccessibilityNodeUtils {
@@ -15,17 +16,42 @@ object AccessibilityNodeUtils {
 
     fun findAcceptButton(root: AccessibilityNodeInfo?): AccessibilityNodeInfo? {
         if (root == null) return null
+        return findClickableByLabels(root, ACCEPT_LABELS)
+    }
+
+    fun findClickableByLabels(root: AccessibilityNodeInfo?, labels: List<String>): AccessibilityNodeInfo? {
+        if (root == null) return null
         var result: AccessibilityNodeInfo? = null
         traverse(root) { node ->
             if (result != null) return@traverse
-            val label = listOfNotNull(node.text?.toString(), node.contentDescription?.toString())
-                .joinToString(" ")
-            val isAcceptLabel = ACCEPT_LABELS.any { label.contains(it, ignoreCase = true) }
-            if (isAcceptLabel && node.isEnabled) {
+            val label = nodeLabel(node)
+            val matched = labels.any { label.contains(it, ignoreCase = true) }
+            if (matched && node.isEnabled) {
                 result = firstClickableAncestor(node)
             }
         }
         return result
+    }
+
+    fun findEditableNode(root: AccessibilityNodeInfo?): AccessibilityNodeInfo? {
+        if (root == null) return null
+        var result: AccessibilityNodeInfo? = null
+        traverse(root) { node ->
+            if (result != null) return@traverse
+            val className = node.className?.toString().orEmpty()
+            if (node.isEnabled && (node.isEditable || className.contains("EditText", ignoreCase = true))) {
+                result = node
+            }
+        }
+        return result
+    }
+
+    fun setText(node: AccessibilityNodeInfo?, value: String): Boolean {
+        if (node == null) return false
+        val args = Bundle().apply {
+            putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, value)
+        }
+        return node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, args)
     }
 
     private fun firstClickableAncestor(node: AccessibilityNodeInfo): AccessibilityNodeInfo? {
@@ -36,6 +62,11 @@ object AccessibilityNodeUtils {
             current = candidate.parent
         }
         return null
+    }
+
+    private fun nodeLabel(node: AccessibilityNodeInfo): String {
+        return listOfNotNull(node.text?.toString(), node.contentDescription?.toString())
+            .joinToString(" ")
     }
 
     private fun traverse(root: AccessibilityNodeInfo, visitor: (AccessibilityNodeInfo) -> Unit) {

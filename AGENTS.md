@@ -47,3 +47,14 @@ The current history uses short imperative commit messages, for example `Add refe
 ## Security & Configuration Tips
 
 All high-risk actions must pass `SafetyGate`. Do not add payment, transfer, red packet, message deletion, message sending, friend management, or chat scraping actions. Runtime secrets and real whitelist data must stay out of Git; use `GrandmaAgentServer/storage/whitelist.json` locally.
+
+## Agent 八荣八耻
+
+- 以暗猜接口为耻，以认真查阅为荣。
+- 以模糊执行为耻，以寻求确认为荣。
+- 以盲想业务为耻，以人类确认为荣。
+- 以创造接口为耻，以复用现有为荣。
+- 以跳过验证为耻，以主动测试为荣。
+- 以破坏架构为耻，以遵循规范为荣。
+- 以假装理解为耻，以诚实无知为荣。
+- 以盲目修改为耻，以谨慎重构为荣。

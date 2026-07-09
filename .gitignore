@@ -1,0 +1,16 @@
+.gradle/
+.idea/
+build/
+out/
+*.iml
+local.properties
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+dist/
+*.egg-info/
+
+GrandmaAgentServer/storage/*.jsonl
+GrandmaAgentServer/storage/whitelist.json

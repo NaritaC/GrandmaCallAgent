@@ -138,4 +138,12 @@ This document records durable discussion decisions and project progress. Use ISO
 - Summary: Improved V0 caller-name parsing for common WeChat call text such as “某某邀请你语音通话”, so notification and accessibility paths can extract the contact name before local whitelist checks.
 - Artifacts: `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/accessibility/WeChatCallParser.kt`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/notification/CallNotificationParser.kt`, `docs/PROJECT_LOG.md`
 - Verification: `git diff --check` passed. Android compile still requires Android Studio/Gradle outside this shell.
-- Next step: Commit and push caller parsing improvement.
+- Commit: `6e44049 Improve V0 WeChat caller parsing`
+- Result: Pushed to `origin/main`.
+
+### 2026-07-09T17:35:53+08:00 - Caller parsing push result recorded
+
+- Category: workflow
+- Summary: Updated the project log to record that the V0 WeChat caller parsing improvement was committed and pushed.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: Follow-up log-only update prepared after `6e44049` reached `origin/main`.

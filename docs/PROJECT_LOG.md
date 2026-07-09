@@ -170,3 +170,12 @@ This document records durable discussion decisions and project progress. Use ISO
 - Summary: Added a V0 evidence collection script that captures device/app/WeChat status, permission settings, and V0 local logs into an ignored evidence directory. Added a private validation record template so phone-test results can be documented without committing real contact names or raw screen text.
 - Artifacts: `scripts/v0_collect_evidence.ps1`, `docs/V0_TEST_RECORD_TEMPLATE.md`, `.gitignore`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `README.md`, `docs/PROJECT_LOG.md`
 - Verification: PowerShell syntax parsing passed for the new script; `git diff --check` passed. Runtime ADB execution still requires a connected test phone.
+
+### 2026-07-09T17:50:40+08:00 - V0 evidence workflow pushed
+
+- Category: workflow
+- Summary: Pushed the V0 evidence collection workflow and private validation record template to GitHub.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: All PowerShell scripts parsed successfully; `git diff --check` and `git diff --cached --check` passed before commit.
+- Commit: `b7c4fa6 Add V0 evidence collection workflow`
+- Result: Pushed to `origin/main`.

@@ -15,7 +15,15 @@
 ## 安装与授权
 
 1. 用 Android Studio 打开 `GrandmaBridge/`。
-2. 连接测试手机，安装运行 `GrandmaBridge`。也可以在已配置 Gradle 和 ADB 的电脑上运行：
+2. 如果准备使用命令行构建安装，先检查电脑侧环境：
+
+```powershell
+.\scripts\v0_host_preflight.ps1 -AssertReady
+```
+
+如果你只用 Android Studio 安装 App，可以跳过这一步。
+
+3. 连接测试手机，安装运行 `GrandmaBridge`。也可以在已配置 Gradle 和 ADB 的电脑上运行：
 
 ```powershell
 .\scripts\v0_build_install.ps1
@@ -23,14 +31,14 @@
 
 该脚本只构建、安装并启动 App，不会操作微信。
 
-3. 如果脚本提示没有 Gradle wrapper 或全局 `gradle`，请先用 Android Studio 打开 `GrandmaBridge/` 并从 IDE 运行 App。
-4. 打开 App，进入 V0 验证面板。
-5. 保持“启用白名单来电自动接听”关闭，先完成白名单和权限配置。
-6. 在白名单输入框中填写允许自动接听的微信显示名，每行一个。
-7. 点击“保存本地白名单”。
-8. 点击“打开无障碍服务设置”，启用 `GrandmaBridge`。
-9. 点击“打开通知使用权设置”，启用 `GrandmaBridge`。
-10. 准备开始来电测试时，再回到 App 打开“启用白名单来电自动接听”。
+4. 如果脚本提示没有 Gradle wrapper 或全局 `gradle`，请先用 Android Studio 打开 `GrandmaBridge/` 并从 IDE 运行 App。
+5. 打开 App，进入 V0 验证面板。
+6. 保持“启用白名单来电自动接听”关闭，先完成白名单和权限配置。
+7. 在白名单输入框中填写允许自动接听的微信显示名，每行一个。
+8. 点击“保存本地白名单”。
+9. 点击“打开无障碍服务设置”，启用 `GrandmaBridge`。
+10. 点击“打开通知使用权设置”，启用 `GrandmaBridge`。
+11. 准备开始来电测试时，再回到 App 打开“启用白名单来电自动接听”。
 
 ## 自动接听验证
 
@@ -130,6 +138,8 @@ adb shell run-as com.grandmacallagent.bridge cat files/v0_actions.log
 仓库也提供了辅助脚本：
 
 ```powershell
+.\scripts\v0_host_preflight.ps1
+.\scripts\v0_host_preflight.ps1 -AssertReady
 .\scripts\v0_build_install.ps1
 .\scripts\v0_device_preflight.ps1
 .\scripts\v0_device_preflight.ps1 -AssertReady
@@ -140,6 +150,7 @@ adb shell run-as com.grandmacallagent.bridge cat files/v0_actions.log
 .\scripts\v0_run_scenario.ps1 -Scenario WhitelistVoice
 ```
 
+- `v0_host_preflight.ps1`：检查电脑侧 Java、ADB、Gradle wrapper 或全局 Gradle，以及 Android 项目文件是否存在。加 `-AssertReady` 会在 CLI 构建安装条件不满足时失败。
 - `v0_build_install.ps1`：构建 debug APK、安装到连接的 Android 设备并启动 App。
 - `v0_device_preflight.ps1`：检查设备连接、App/微信是否安装、无障碍和通知权限是否启用。加 `-AssertReady` 会在缺少 App、微信、无障碍或通知权限时失败。
 - `v0_read_logs.ps1`：读取 `files/v0_actions.log`。

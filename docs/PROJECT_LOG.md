@@ -259,3 +259,10 @@ This document records durable discussion decisions and project progress. Use ISO
 - Verification: `git diff --cached --check` passed before commit; push completed to `origin/main`.
 - Commit: `2a2166e Add V0 preflight readiness assertions`
 - Result: Pushed to `origin/main`.
+
+### 2026-07-16T22:30:58+08:00 - V0 host preflight added
+
+- Category: tooling
+- Summary: Added a host-side preflight script for CLI phone validation. It checks the Android project files, Java, ADB, and Gradle wrapper/global Gradle before attempting build/install workflows, and documents when Android Studio should be used instead.
+- Artifacts: `scripts/v0_host_preflight.ps1`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `README.md`, `docs/PROJECT_LOG.md`
+- Verification: All PowerShell scripts parsed successfully; `scripts/v0_host_preflight.ps1` ran locally and correctly reported Java present but ADB/Gradle unavailable; `git diff --check` passed.

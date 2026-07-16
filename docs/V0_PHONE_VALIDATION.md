@@ -48,6 +48,12 @@
 .\scripts\v0_assert_log.ps1 -Required incoming_detected,incoming_allowed,accept_success
 ```
 
+也可以用场景化脚本完成清日志、人工步骤提示、断言和证据采集：
+
+```powershell
+.\scripts\v0_run_scenario.ps1 -Scenario WhitelistVoice
+```
+
 ### 自动接听总开关
 
 1. 关闭“启用白名单来电自动接听”。
@@ -130,6 +136,7 @@ adb shell run-as com.grandmacallagent.bridge cat files/v0_actions.log
 .\scripts\v0_clear_logs.ps1
 .\scripts\v0_collect_evidence.ps1
 .\scripts\v0_assert_log.ps1 -Required incoming_detected
+.\scripts\v0_run_scenario.ps1 -Scenario WhitelistVoice
 ```
 
 - `v0_build_install.ps1`：构建 debug APK、安装到连接的 Android 设备并启动 App。
@@ -137,7 +144,8 @@ adb shell run-as com.grandmacallagent.bridge cat files/v0_actions.log
 - `v0_read_logs.ps1`：读取 `files/v0_actions.log`。
 - `v0_clear_logs.ps1`：清空 `files/v0_actions.log`。
 - `v0_collect_evidence.ps1`：把设备信息、App/微信版本、权限状态和 V0 本地日志保存到 `artifacts/v0-evidence/`。该目录已被 `.gitignore` 忽略，不要提交包含真实联系人昵称的证据包。
-- `v0_assert_log.ps1`：检查日志中是否包含必需关键字、是否不包含禁止关键字；断言失败时退出码为 `1`。
+- `v0_assert_log.ps1`：检查日志中是否包含必需关键字、是否不包含禁止关键字；断言失败时抛出错误。
+- `v0_run_scenario.ps1`：按指定场景提示人工操作，自动清空日志、断言关键字并采集证据包。加 `-PlanOnly` 可只预览步骤，不运行 ADB。可用场景包括 `AutoAnswerOff`、`WhitelistVoice`、`WhitelistVideo`、`NonWhitelist`、`HighRiskPage`、`NonCallAccept`、`OutboundVoice`、`OutboundVideo`、`OutboundCancel`。
 
 如果需要校准微信 UI 文本，可以在安全页面上额外运行：
 
@@ -155,6 +163,19 @@ adb shell run-as com.grandmacallagent.bridge cat files/v0_actions.log
 2. 执行一个场景后先在 App 内刷新日志，确认关键字是否出现。
 3. 再运行 `.\scripts\v0_collect_evidence.ps1` 采集证据包。
 4. 将证据包目录名写入本地验证记录，不要把真实日志内容写入 `docs/PROJECT_LOG.md`。
+
+如果使用场景化脚本，推荐顺序是：
+
+```powershell
+.\scripts\v0_run_scenario.ps1 -Scenario AutoAnswerOff
+.\scripts\v0_run_scenario.ps1 -Scenario WhitelistVoice
+.\scripts\v0_run_scenario.ps1 -Scenario WhitelistVideo
+.\scripts\v0_run_scenario.ps1 -Scenario NonWhitelist
+.\scripts\v0_run_scenario.ps1 -Scenario NonCallAccept
+.\scripts\v0_run_scenario.ps1 -Scenario OutboundCancel
+```
+
+`HighRiskPage`、`OutboundVoice`、`OutboundVideo` 风险更高，只在备用手机、测试微信号和人工观察下执行。
 
 ## 失败排查
 

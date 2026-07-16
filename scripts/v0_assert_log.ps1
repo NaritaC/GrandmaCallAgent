@@ -40,7 +40,7 @@ if ($Required.Count -eq 0 -and $Forbidden.Count -eq 0) {
 }
 
 if ($failed) {
-    exit 1
+    throw "V0 log assertions failed."
 }
 
 Write-Host "V0 log assertions passed."

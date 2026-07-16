@@ -227,3 +227,10 @@ This document records durable discussion decisions and project progress. Use ISO
 - Verification: `git diff --cached --check` passed before commit; push completed to `origin/main`.
 - Commit: `7e9b1de Tighten V0 incoming call gate`
 - Result: Pushed to `origin/main`.
+
+### 2026-07-16T22:20:23+08:00 - V0 scenario runner added
+
+- Category: tooling
+- Summary: Added an interactive V0 scenario runner that prints manual test steps, clears logs, asserts required/forbidden log keywords, and collects evidence after each scenario. Added `-PlanOnly` mode for previewing scenarios without ADB.
+- Artifacts: `scripts/v0_run_scenario.ps1`, `scripts/v0_assert_log.ps1`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `README.md`, `docs/PROJECT_LOG.md`
+- Verification: All PowerShell scripts parsed successfully; `scripts/v0_run_scenario.ps1 -Scenario WhitelistVoice -PlanOnly` ran without ADB; `git diff --check` passed. Runtime scenario execution still requires ADB and a connected test phone.

@@ -243,3 +243,10 @@ This document records durable discussion decisions and project progress. Use ISO
 - Verification: `git diff --cached --check` passed before commit; push completed to `origin/main`.
 - Commit: `4a3c36e Add V0 scenario validation runner`
 - Result: Pushed to `origin/main`.
+
+### 2026-07-16T22:25:29+08:00 - V0 preflight assertions added
+
+- Category: tooling
+- Summary: Added `-AssertReady` to the V0 device preflight script so validation fails fast when GrandmaBridge, WeChat, AccessibilityService, or NotificationListenerService are missing. Updated the scenario runner to execute that readiness check before running phone-test scenarios unless explicitly skipped.
+- Artifacts: `scripts/v0_device_preflight.ps1`, `scripts/v0_run_scenario.ps1`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `docs/PROJECT_LOG.md`
+- Verification: All PowerShell scripts parsed successfully; `scripts/v0_run_scenario.ps1 -Scenario NonWhitelist -PlanOnly` ran without ADB; `git diff --check` passed. Runtime readiness checks still require ADB and a connected test phone.

@@ -132,6 +132,7 @@ adb shell run-as com.grandmacallagent.bridge cat files/v0_actions.log
 ```powershell
 .\scripts\v0_build_install.ps1
 .\scripts\v0_device_preflight.ps1
+.\scripts\v0_device_preflight.ps1 -AssertReady
 .\scripts\v0_read_logs.ps1
 .\scripts\v0_clear_logs.ps1
 .\scripts\v0_collect_evidence.ps1
@@ -140,12 +141,12 @@ adb shell run-as com.grandmacallagent.bridge cat files/v0_actions.log
 ```
 
 - `v0_build_install.ps1`：构建 debug APK、安装到连接的 Android 设备并启动 App。
-- `v0_device_preflight.ps1`：检查设备连接、App 是否安装、无障碍和通知权限是否启用。
+- `v0_device_preflight.ps1`：检查设备连接、App/微信是否安装、无障碍和通知权限是否启用。加 `-AssertReady` 会在缺少 App、微信、无障碍或通知权限时失败。
 - `v0_read_logs.ps1`：读取 `files/v0_actions.log`。
 - `v0_clear_logs.ps1`：清空 `files/v0_actions.log`。
 - `v0_collect_evidence.ps1`：把设备信息、App/微信版本、权限状态和 V0 本地日志保存到 `artifacts/v0-evidence/`。该目录已被 `.gitignore` 忽略，不要提交包含真实联系人昵称的证据包。
 - `v0_assert_log.ps1`：检查日志中是否包含必需关键字、是否不包含禁止关键字；断言失败时抛出错误。
-- `v0_run_scenario.ps1`：按指定场景提示人工操作，自动清空日志、断言关键字并采集证据包。加 `-PlanOnly` 可只预览步骤，不运行 ADB。可用场景包括 `AutoAnswerOff`、`WhitelistVoice`、`WhitelistVideo`、`NonWhitelist`、`HighRiskPage`、`NonCallAccept`、`OutboundVoice`、`OutboundVideo`、`OutboundCancel`。
+- `v0_run_scenario.ps1`：按指定场景提示人工操作，默认先执行 `v0_device_preflight.ps1 -AssertReady`，然后自动清空日志、断言关键字并采集证据包。加 `-PlanOnly` 可只预览步骤，不运行 ADB；加 `-SkipPreflight` 可跳过预检。可用场景包括 `AutoAnswerOff`、`WhitelistVoice`、`WhitelistVideo`、`NonWhitelist`、`HighRiskPage`、`NonCallAccept`、`OutboundVoice`、`OutboundVideo`、`OutboundCancel`。
 
 如果需要校准微信 UI 文本，可以在安全页面上额外运行：
 

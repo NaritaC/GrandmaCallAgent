@@ -15,6 +15,7 @@ param(
     [string]$PackageName = "com.grandmacallagent.bridge",
     [switch]$SkipClear,
     [switch]$SkipEvidence,
+    [switch]$SkipPreflight,
     [switch]$PlanOnly
 )
 
@@ -124,6 +125,10 @@ Write-Host "Forbidden log keywords: $($forbidden -join ', ')"
 if ($PlanOnly) {
     Write-Host "PlanOnly mode: no ADB command was run."
     return
+}
+
+if (-not $SkipPreflight) {
+    & (Join-Path $ScriptDir "v0_device_preflight.ps1") -PackageName $PackageName -AssertReady
 }
 
 if (-not $SkipClear) {

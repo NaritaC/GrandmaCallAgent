@@ -29,6 +29,7 @@
 - [ ] 自动接听总开关默认关闭。
 - [ ] 自动接听总开关关闭时，白名单来电也不会自动接听，并记录 `auto_answer_disabled`。
 - [ ] `scripts/v0_build_install.ps1` 能在具备 Gradle/ADB 的电脑上安装并启动 App，或已通过 Android Studio 完成等价操作。
+- [ ] `scripts/v0_device_preflight.ps1 -AssertReady` 通过，确认 App、微信、无障碍服务和通知监听权限均就绪。
 - [ ] App 能显示和清空本地日志。
 - [ ] 白名单联系人微信语音来电能自动接听，并记录 `accept_success`。
 - [ ] 白名单联系人微信视频来电能自动接听，并记录 `callType=video`。

@@ -234,3 +234,12 @@ This document records durable discussion decisions and project progress. Use ISO
 - Summary: Added an interactive V0 scenario runner that prints manual test steps, clears logs, asserts required/forbidden log keywords, and collects evidence after each scenario. Added `-PlanOnly` mode for previewing scenarios without ADB.
 - Artifacts: `scripts/v0_run_scenario.ps1`, `scripts/v0_assert_log.ps1`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `README.md`, `docs/PROJECT_LOG.md`
 - Verification: All PowerShell scripts parsed successfully; `scripts/v0_run_scenario.ps1 -Scenario WhitelistVoice -PlanOnly` ran without ADB; `git diff --check` passed. Runtime scenario execution still requires ADB and a connected test phone.
+
+### 2026-07-16T22:22:06+08:00 - V0 scenario runner pushed
+
+- Category: workflow
+- Summary: Pushed the V0 scenario validation runner and updated validation guidance to GitHub.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: `git diff --cached --check` passed before commit; push completed to `origin/main`.
+- Commit: `4a3c36e Add V0 scenario validation runner`
+- Result: Pushed to `origin/main`.

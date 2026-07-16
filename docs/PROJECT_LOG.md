@@ -218,3 +218,12 @@ This document records durable discussion decisions and project progress. Use ISO
 - Summary: Tightened local incoming-call safety checks so the accept-click gate requires both a voice/video call signal and an accept signal. Removed standalone “邀请你” from the accessibility incoming-call detector so non-call invitation pages with an accept button are less likely to enter the V0 call path.
 - Artifacts: `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/safety/SafetyGate.kt`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/accessibility/WeChatCallParser.kt`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `docs/V0_TEST_RECORD_TEMPLATE.md`, `docs/PROJECT_LOG.md`
 - Verification: All PowerShell scripts parsed successfully; `git diff --check` passed. Android runtime validation still requires Gradle/ADB and a connected phone.
+
+### 2026-07-16T22:15:04+08:00 - V0 incoming-call gate push recorded
+
+- Category: workflow
+- Summary: Pushed the tightened V0 incoming-call gate and non-call accept-button negative validation guidance to GitHub.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: `git diff --cached --check` passed before commit; push completed to `origin/main`.
+- Commit: `7e9b1de Tighten V0 incoming call gate`
+- Result: Pushed to `origin/main`.

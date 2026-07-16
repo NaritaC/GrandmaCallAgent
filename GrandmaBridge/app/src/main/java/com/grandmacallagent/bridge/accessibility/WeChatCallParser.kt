@@ -55,7 +55,7 @@ object WeChatCallParser {
             .trim()
     }
 
-    private val CALL_KEYWORDS = listOf("语音通话", "视频通话", "邀请你", "voice call", "video call")
+    private val CALL_KEYWORDS = listOf("语音通话", "视频通话", "voice call", "video call")
     private val ACCEPT_KEYWORDS = listOf("接听", "接受", "接通", "Answer", "Accept")
     private val CONTACT_MARKERS = listOf("邀请你", "正在邀请", "来电", "calling", "invites you")
     private val NOISE_TEXTS = listOf(

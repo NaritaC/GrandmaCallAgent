@@ -84,6 +84,13 @@
 3. 观察日志中不应出现 `accept_success` 或 `outbound_click_final_call`。
 4. 如出现高风险页面关键词，期望日志包含 `local_reject_high_risk_keyword`。
 
+### 非通话“接受”按钮负向测试
+
+1. 在测试账号中打开含“接受”“同意”等按钮但不是语音/视频来电的微信页面，例如普通邀请、好友验证或其它非通话确认页。
+2. 不要点击真实确认动作。
+3. 期望 App 不会自动点击该按钮。
+4. 如触发接听流程，期望日志拒绝原因为 `local_reject_not_incoming_call_window`，且不出现 `accept_success`。
+
 ## 一键拨出验证
 
 1. 确认目标联系人已经在本地白名单内。

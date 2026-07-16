@@ -211,3 +211,10 @@ This document records durable discussion decisions and project progress. Use ISO
 - Verification: All PowerShell scripts parsed successfully; `git diff --check` and `git diff --cached --check` passed before commit. Android runtime validation still requires a connected phone.
 - Commit: `ec210be Add V0 outbound cancel control`
 - Result: Pushed to `origin/main`.
+
+### 2026-07-09T18:04:27+08:00 - V0 incoming-call gate tightened
+
+- Category: implementation
+- Summary: Tightened local incoming-call safety checks so the accept-click gate requires both a voice/video call signal and an accept signal. Removed standalone “邀请你” from the accessibility incoming-call detector so non-call invitation pages with an accept button are less likely to enter the V0 call path.
+- Artifacts: `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/safety/SafetyGate.kt`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/accessibility/WeChatCallParser.kt`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `docs/V0_TEST_RECORD_TEMPLATE.md`, `docs/PROJECT_LOG.md`
+- Verification: All PowerShell scripts parsed successfully; `git diff --check` passed. Android runtime validation still requires Gradle/ADB and a connected phone.

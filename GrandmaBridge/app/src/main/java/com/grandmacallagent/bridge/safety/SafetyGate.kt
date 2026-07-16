@@ -25,8 +25,13 @@ object SafetyGate {
     private val incomingCallKeywords = listOf(
         "语音通话",
         "视频通话",
+        "voice call",
+        "video call",
+    )
+    private val acceptCallKeywords = listOf(
         "接听",
         "接受",
+        "接通",
         "Answer",
         "Accept",
     )
@@ -42,7 +47,8 @@ object SafetyGate {
 
         val joined = visibleTexts.joinToString(" ")
         val hasIncomingCallSignal = incomingCallKeywords.any { joined.contains(it, ignoreCase = true) }
-        if (!hasIncomingCallSignal) {
+        val hasAcceptSignal = acceptCallKeywords.any { joined.contains(it, ignoreCase = true) }
+        if (!hasIncomingCallSignal || !hasAcceptSignal) {
             return LocalSafetyDecision(false, "local_reject_not_incoming_call_window")
         }
 

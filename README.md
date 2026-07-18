@@ -18,41 +18,50 @@ GrandmaCallAgent/
   docs/                   # 架构、权限、测试和运行说明
 ```
 
-## 架构图
+## V0 架构图
 
 ```mermaid
 flowchart LR
-  A[微信来电通知/窗口] --> B[GrandmaBridge NotificationListenerService]
-  A --> C[GrandmaBridge AccessibilityService]
-  B --> D[WebSocket Client]
-  C --> D
-  D <--> E[GrandmaAgentServer WebSocket]
-  E --> F[WhitelistStore]
-  E --> G[SafetyGate]
-  E --> H[TaskLogger]
-  G -->|允许| I[accept_call 命令]
-  G -->|拒绝| H
-  I --> D
-  D --> C
-  C -->|再次校验后点击接听| A
+  A[微信来电通知/窗口] --> B[NotificationListener / AccessibilityService]
+  B --> C[本地开关与白名单]
+  C --> D[本地 SafetyGate]
+  D -->|允许| E[仅点击接听]
+  D -->|拒绝| F[本地日志]
+  G[用户点击一键拨出] --> H[白名单与页面状态机]
+  H --> D
+  D -->|允许| I[搜索联系人并点击通话]
+  E --> F
+  I --> F
 ```
 
-详细架构见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
+V1 才接入 WebSocket、Agent Server、工具 API 和设备心跳。详细架构见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
 
 ## 安全边界
 
-第一阶段只有一个允许工具：`accept_call`。它必须满足：
+V0 只允许两类本地通话动作：白名单来电自动接听，以及用户在 GrandmaBridge 内主动触发的白名单一键拨出。它们必须满足：
 
 - `app_package == "com.tencent.mm"`。
 - `call_type` 只能是 `voice` 或 `video`。
-- 来电联系人必须命中服务端白名单。
-- 动作和页面文本不能包含支付、转账、红包、删除、银行卡等高风险关键词。
+- 联系人必须精确命中手机本地白名单。
+- 每次微信 UI 动作前必须通过本地 `SafetyGate`。
+- 页面文本不能包含支付、转账、红包、删除、银行卡等高风险关键词。
+- 一键拨出必须从已确认的微信主标签页开始，并逐步确认搜索页、精确联系人和目标聊天页。
 
-其他工具请求默认拒绝并写入任务日志。
+不允许发送消息、加好友、读取聊天、支付、转账、红包或删除等非通话动作。
 
 ## 本地运行
 
-### 启动云端服务
+### V0 Android 真机验证
+
+先运行不依赖 ADB 的脚本自测：
+
+```powershell
+.\scripts\v0_self_test.ps1
+```
+
+然后用 Android Studio 打开 `GrandmaBridge/`，安装到备用手机或测试手机，配置本地白名单并手动授权无障碍服务和通知使用权。完整步骤、安全警示及场景脚本见 [V0 手机验证指南](docs/V0_PHONE_VALIDATION.md)。
+
+### V1 云端骨架（当前 V0 不需要）
 
 ```powershell
 cd GrandmaAgentServer
@@ -69,18 +78,6 @@ uvicorn grandma_agent_server.main:app --reload --host 0.0.0.0 --port 8000
 - 工具列表：`http://127.0.0.1:8000/tools`
 - 任务日志：`http://127.0.0.1:8000/tasks`
 
-### 运行 Android 端
-
-1. 用 Android Studio 打开 `GrandmaBridge`。
-2. 同步 Gradle 后安装到手机或模拟器。
-3. 在 App 首页设置 WebSocket 地址：
-   - 模拟器访问本机：`ws://10.0.2.2:8000`
-   - 真机访问电脑：`ws://<电脑局域网 IP>:8000`
-4. 按页面按钮打开系统设置，手动启用：
-   - 无障碍服务 `GrandmaBridge`
-   - 通知使用权 `GrandmaBridge`
-5. 确保 `GrandmaAgentServer/storage/whitelist.json` 中包含允许自动接听的微信联系人显示名。
-
 更多运行细节见 [docs/LOCAL_RUN.md](docs/LOCAL_RUN.md)。
 
 ## 文档
@@ -96,12 +93,13 @@ uvicorn grandma_agent_server.main:app --reload --host 0.0.0.0 --port 8000
 - [可参考项目调研](docs/REFERENCE_PROJECTS.md)
 - [项目进展日志](docs/PROJECT_LOG.md)
 
-V0 手机验证辅助脚本位于 `scripts/`，包括主机预检、构建安装、设备预检、读取日志、清空日志、日志断言、场景化验证和采集验证证据包。
+V0 手机验证辅助脚本位于 `scripts/`，包括离线自测、主机预检、构建安装、设备预检、读取日志、清空日志、日志断言、场景化验证和采集验证证据包。
 
 安全默认值：V0 自动接听总开关默认关闭。保存白名单并开启系统权限后，仍需在 App 内手动打开“启用白名单来电自动接听”才会自动接听。
 
 ## 当前限制
 
 - 微信 UI 文案可能因版本、语言、系统 ROM 变化，需要在真机上校准按钮文本。
-- 第一阶段不做主动拨号、不发消息、不读聊天内容、不处理支付相关页面。
+- V0 不做无人值守主动外呼；一键拨出只能由用户在 App 内主动触发，且仅限本地白名单联系人。
+- 不发消息、不读聊天内容，不操作支付、转账、红包或删除相关页面。
 - Android 端不绕过系统权限，Accessibility 和 Notification Listener 都需要用户手动授权。

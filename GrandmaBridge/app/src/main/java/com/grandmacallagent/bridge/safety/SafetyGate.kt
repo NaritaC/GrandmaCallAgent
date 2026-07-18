@@ -52,8 +52,11 @@ object SafetyGate {
             return LocalSafetyDecision(false, "local_reject_not_incoming_call_window")
         }
 
-        val contact = expectedContactName?.trim().orEmpty()
-        if (contact.isNotBlank() && visibleTexts.none { it.contains(contact, ignoreCase = true) }) {
+        val contact = normalize(expectedContactName.orEmpty())
+        if (contact.isBlank()) {
+            return LocalSafetyDecision(false, "local_reject_blank_expected_contact")
+        }
+        if (visibleTexts.none { containsExpectedContact(it, contact) }) {
             return LocalSafetyDecision(false, "local_reject_contact_not_visible")
         }
 
@@ -72,4 +75,27 @@ object SafetyGate {
 
         return LocalSafetyDecision(true, "local_allowed_wechat_window")
     }
+
+    private fun containsExpectedContact(text: String, normalizedContact: String): Boolean {
+        val normalizedText = normalize(text)
+        if (normalizedText == normalizedContact) return true
+        return contactPrefixes.any { prefix ->
+            contactContextMarkers.any { marker ->
+                normalizedText.startsWith(normalize(prefix) + normalizedContact + normalize(marker))
+            }
+        }
+    }
+
+    private fun normalize(value: String): String {
+        return value.filterNot { it.isWhitespace() }.lowercase()
+    }
+
+    private val contactContextMarkers = listOf(
+        "邀请你",
+        "正在邀请",
+        "来电",
+        "calling",
+        "invites you",
+    )
+    private val contactPrefixes = listOf("", "来自", "from")
 }

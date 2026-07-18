@@ -24,6 +24,7 @@ object V0AutomationRuntime {
             "incoming_detected",
             "source=$source contact=${contactName.orEmpty()} callType=$normalizedCallType",
         )
+        GrandmaAccessibilityService.cancelPendingOutboundForIncoming(context)
 
         if (!LocalV0Settings.isAutoAnswerEnabled(context)) {
             LocalActionLogger.append(context, "incoming_rejected", "reason=auto_answer_disabled")
@@ -72,12 +73,11 @@ object V0AutomationRuntime {
         }
 
         LocalActionLogger.append(context, "outbound_requested", "contact=$normalizedName callType=$normalizedCallType")
-        GrandmaAccessibilityService.requestMakeWeChatCall(
+        return GrandmaAccessibilityService.requestMakeWeChatCall(
             context = context,
             contactName = normalizedName,
             callType = normalizedCallType,
         )
-        return true
     }
 
     fun cancelOutboundCall(context: Context): Boolean {

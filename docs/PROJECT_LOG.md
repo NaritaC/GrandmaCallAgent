@@ -283,3 +283,20 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `C:\Users\Narita\.agents\skills\grill-me\SKILL.md`, `C:\Users\Narita\.agents\skills\grilling\SKILL.md`, `docs/PROJECT_LOG.md`
 - Verification: Both skill files exist and their metadata and instructions were read successfully. The installer reported safe/low-risk assessments for both. Its PromptScript compatibility warning does not affect the successful Codex installation.
 - Next step: Start a new Codex turn or session so the newly installed skills are discovered.
+
+### 2026-07-19T00:48:55+08:00 - Grill Me installation record pushed
+
+- Category: workflow
+- Summary: Pushed the global `grill-me` and `grilling` installation record to GitHub.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: `git diff --cached --check` passed before commit; push completed to `origin/main`.
+- Commit: `8677402 Log global Grill Me skill installation`
+- Result: Pushed to `origin/main`.
+
+### 2026-07-19T01:18:25+08:00 - V0 outbound safety and phone validation tooling completed
+
+- Category: implementation
+- Summary: Replaced generic outbound UI automation with a fail-closed WeChat page state machine, exact contact matching, duplicate whitelist checks at the execution boundary, incoming-call priority cancellation, and explicit failure reasons. Added Android unit tests for SafetyGate, call parsers, and outbound page policy. Added shared ADB target selection, `-Serial` support, an offline PowerShell self-test, and an `OutboundWrongPage` negative scenario. Updated V0 architecture, local run, phone validation, risk warnings, test checklist, and record template.
+- Artifacts: `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/accessibility/`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/safety/SafetyGate.kt`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/v0/V0AutomationRuntime.kt`, `GrandmaBridge/app/src/test/`, `scripts/v0_*.ps1`, `README.md`, `docs/LOCAL_RUN.md`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `docs/V0_AUTOMATION_VALIDATION.md`, `docs/V0_TEST_RECORD_TEMPLATE.md`, `docs/PROJECT_LOG.md`
+- Verification: `scripts/v0_self_test.ps1` passed all PowerShell parse, ADB selection, and 10 scenario-plan checks; `scripts/v0_run_scenario.ps1 -Scenario OutboundWrongPage -PlanOnly` passed; `git diff --check` passed. Host preflight confirmed project files and Java but reported ADB and Gradle unavailable. Android unit tests were not run because this host has no Android SDK, Gradle, or Kotlin compiler. Server tests were not run because the current Python environment has no `pytest`; server code was unchanged.
+- Next step: Build and run Android unit tests in Android Studio, install the debug app on a backup/test phone, then execute the phone scenarios in `docs/V0_PHONE_VALIDATION.md`, beginning with negative tests before live outbound calls.

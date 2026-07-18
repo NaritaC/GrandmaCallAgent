@@ -1,18 +1,21 @@
 param(
-    [string]$PackageName = "com.grandmacallagent.bridge"
+    [string]$PackageName = "com.grandmacallagent.bridge",
+    [string]$Serial = ""
 )
 
 $ErrorActionPreference = "Stop"
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-if (-not (Get-Command adb -ErrorAction SilentlyContinue)) {
-    throw "adb not found. Install Android Studio Platform Tools and add adb to PATH."
-}
+. (Join-Path $ScriptDir "v0_common.ps1")
 
+$target = Resolve-V0AdbTarget -Serial $Serial
 Write-Host "Clearing V0 local log from $PackageName..."
-& adb shell run-as $PackageName sh -c "echo -n > files/v0_actions.log"
-
-if ($LASTEXITCODE -eq 0) {
-    Write-Host "V0 local log cleared."
-} else {
-    Write-Host "Failed to clear logs. You can also clear logs from the GrandmaBridge app UI."
-}
+Invoke-V0Adb -Target $target -Arguments @(
+    "shell",
+    "run-as",
+    $PackageName,
+    "sh",
+    "-c",
+    "echo -n > files/v0_actions.log"
+) | Out-Null
+Write-Host "V0 local log cleared on $($target.Serial)."

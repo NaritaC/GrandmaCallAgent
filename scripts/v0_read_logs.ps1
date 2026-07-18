@@ -1,22 +1,21 @@
 param(
-    [string]$PackageName = "com.grandmacallagent.bridge"
+    [string]$PackageName = "com.grandmacallagent.bridge",
+    [string]$Serial = ""
 )
 
 $ErrorActionPreference = "Stop"
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-if (-not (Get-Command adb -ErrorAction SilentlyContinue)) {
-    throw "adb not found. Install Android Studio Platform Tools and add adb to PATH."
-}
+. (Join-Path $ScriptDir "v0_common.ps1")
 
-Write-Host "Reading V0 local log from $PackageName..."
+$target = Resolve-V0AdbTarget -Serial $Serial
+Write-Host "Reading V0 local log from $PackageName on $($target.Serial)..."
 Write-Host ""
 
-& adb shell run-as $PackageName cat files/v0_actions.log
-
-if ($LASTEXITCODE -ne 0) {
-    Write-Host ""
-    Write-Host "Failed to read logs. Check that:"
-    Write-Host "- GrandmaBridge is installed as a debuggable build."
-    Write-Host "- The app has been opened at least once."
-    Write-Host "- The package name is $PackageName."
-}
+Invoke-V0Adb -Target $target -Arguments @(
+    "shell",
+    "run-as",
+    $PackageName,
+    "cat",
+    "files/v0_actions.log"
+)

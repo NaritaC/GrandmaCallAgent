@@ -10,6 +10,7 @@ object AccessibilityNodeUtils {
         traverse(root) { node ->
             node.text?.toString()?.takeIf { it.isNotBlank() }?.let(results::add)
             node.contentDescription?.toString()?.takeIf { it.isNotBlank() }?.let(results::add)
+            node.hintText?.toString()?.takeIf { it.isNotBlank() }?.let(results::add)
         }
         return results
     }
@@ -24,8 +25,9 @@ object AccessibilityNodeUtils {
         var result: AccessibilityNodeInfo? = null
         traverse(root) { node ->
             if (result != null) return@traverse
-            val label = nodeLabel(node)
-            val matched = labels.any { label.contains(it, ignoreCase = true) }
+            val matched = labels.any { expected ->
+                nodeLabels(node).any { actual -> actual.contains(expected, ignoreCase = true) }
+            }
             if (matched && node.isEnabled) {
                 result = firstClickableAncestor(node)
             }
@@ -33,13 +35,33 @@ object AccessibilityNodeUtils {
         return result
     }
 
-    fun findEditableNode(root: AccessibilityNodeInfo?): AccessibilityNodeInfo? {
+    fun findClickableByExactLabels(root: AccessibilityNodeInfo?, labels: List<String>): AccessibilityNodeInfo? {
+        if (root == null) return null
+        val normalizedLabels = labels.map(::normalizeLabel).filter { it.isNotBlank() }.toSet()
+        var result: AccessibilityNodeInfo? = null
+        traverse(root) { node ->
+            if (result != null) return@traverse
+            val className = node.className?.toString().orEmpty()
+            if (node.isEditable || className.contains("EditText", ignoreCase = true)) return@traverse
+            val matched = nodeLabels(node).any { normalizeLabel(it) in normalizedLabels }
+            if (matched && node.isEnabled) {
+                result = firstClickableAncestor(node)
+            }
+        }
+        return result
+    }
+
+    fun findEditableNodeByLabels(root: AccessibilityNodeInfo?, labels: List<String>): AccessibilityNodeInfo? {
         if (root == null) return null
         var result: AccessibilityNodeInfo? = null
         traverse(root) { node ->
             if (result != null) return@traverse
             val className = node.className?.toString().orEmpty()
-            if (node.isEnabled && (node.isEditable || className.contains("EditText", ignoreCase = true))) {
+            val isEditor = node.isEditable || className.contains("EditText", ignoreCase = true)
+            val matches = labels.any { expected ->
+                nodeLabels(node).any { actual -> actual.contains(expected, ignoreCase = true) }
+            }
+            if (node.isEnabled && isEditor && matches) {
                 result = node
             }
         }
@@ -64,9 +86,16 @@ object AccessibilityNodeUtils {
         return null
     }
 
-    private fun nodeLabel(node: AccessibilityNodeInfo): String {
-        return listOfNotNull(node.text?.toString(), node.contentDescription?.toString())
-            .joinToString(" ")
+    private fun nodeLabels(node: AccessibilityNodeInfo): List<String> {
+        return listOfNotNull(
+            node.text?.toString(),
+            node.contentDescription?.toString(),
+            node.hintText?.toString(),
+        ).filter { it.isNotBlank() }
+    }
+
+    private fun normalizeLabel(value: String): String {
+        return value.filterNot { it.isWhitespace() }.lowercase()
     }
 
     private fun traverse(root: AccessibilityNodeInfo, visitor: (AccessibilityNodeInfo) -> Unit) {

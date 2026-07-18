@@ -27,6 +27,8 @@
 
 - [ ] App 能保存本地白名单。
 - [ ] 自动接听总开关默认关闭。
+- [ ] `scripts/v0_self_test.ps1` 通过，确认脚本语法、ADB 设备选择和全部场景计划可执行。
+- [ ] Android 本地单元测试通过，覆盖 `SafetyGate`、来电解析和拨出页面策略。
 - [ ] 自动接听总开关关闭时，白名单来电也不会自动接听，并记录 `auto_answer_disabled`。
 - [ ] 如使用命令行安装，`scripts/v0_host_preflight.ps1 -AssertReady` 通过，确认 Java、ADB、Gradle wrapper 或全局 Gradle 就绪。
 - [ ] `scripts/v0_build_install.ps1` 能在具备 Gradle/ADB 的电脑上安装并启动 App，或已通过 Android Studio 完成等价操作。
@@ -36,12 +38,17 @@
 - [ ] 白名单联系人微信视频来电能自动接听，并记录 `callType=video`。
 - [ ] 非白名单联系人来电不会自动接听，并记录拒绝原因。
 - [ ] 一键拨出只允许白名单联系人。
+- [ ] 相似但不完全一致的联系人显示名不会通过精确联系人校验。
+- [ ] 微信不在主标签页时，一键拨出记录 `wechat_home_not_confirmed`，且不输入文字、不点击联系人或通话按钮。
 - [ ] 一键拨出启动后，App 内“停止一键拨出”能取消 pending outbound 并记录 `outbound_cancelled`。
+- [ ] 一键拨出期间收到微信来电会先取消待拨任务，通话结束后不会恢复旧任务。
 - [ ] 一键拨出错误页面时能停止并记录失败原因。
 - [ ] 微信支付、红包、转账、删除相关页面不会触发任何点击。
 - [ ] 非通话页面即使出现“接受”按钮，也不会被当成微信来电接听页。
 - [ ] 使用 `scripts/v0_assert_log.ps1` 对关键场景执行必需/禁止日志关键字断言。
 - [ ] 使用 `scripts/v0_run_scenario.ps1` 跑至少 `AutoAnswerOff`、`WhitelistVoice`、`WhitelistVideo`、`NonWhitelist`、`NonCallAccept`、`OutboundCancel` 六个场景。
+- [ ] 使用 `scripts/v0_run_scenario.ps1 -Scenario OutboundWrongPage` 验证错误页面负向边界。
+- [ ] 多设备连接时，未传 `-Serial` 会失败；传入目标序列号后只操作指定手机。
 - [ ] 使用 `scripts/v0_collect_evidence.ps1` 采集验证证据包，确认权限状态、微信版本和 V0 日志可追溯。
 
 ## V1 端到端测试（预留）

@@ -1,17 +1,13 @@
 param(
     [string]$ProjectDir = "GrandmaBridge",
-    [string]$PackageName = "com.grandmacallagent.bridge"
+    [string]$PackageName = "com.grandmacallagent.bridge",
+    [string]$Serial = ""
 )
 
 $ErrorActionPreference = "Stop"
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-function Require-Adb {
-    $adb = Get-Command adb -ErrorAction SilentlyContinue
-    if (-not $adb) {
-        throw "adb not found. Install Android Studio Platform Tools and add adb to PATH."
-    }
-    return $adb.Source
-}
+. (Join-Path $ScriptDir "v0_common.ps1")
 
 function Resolve-GradleCommand {
     param([string]$RootDir)
@@ -30,10 +26,11 @@ function Resolve-GradleCommand {
 }
 
 $root = Resolve-Path $ProjectDir
-$adb = Require-Adb
+$target = Resolve-V0AdbTarget -Serial $Serial
 $gradleCommand = Resolve-GradleCommand $root.Path
 
-Write-Host "adb: $adb"
+Write-Host "adb: $($target.AdbPath)"
+Write-Host "selected device: $($target.Serial)"
 Write-Host "gradle: $gradleCommand"
 Write-Host "Building debug APK..."
 
@@ -53,12 +50,17 @@ if (-not (Test-Path $apk)) {
 }
 
 Write-Host "Installing APK: $apk"
-adb install -r $apk
-if ($LASTEXITCODE -ne 0) {
-    throw "adb install failed with exit code $LASTEXITCODE."
-}
+Invoke-V0Adb -Target $target -Arguments @("install", "-r", $apk) | Out-Host
 
 Write-Host "Launching $PackageName..."
-adb shell monkey -p $PackageName -c android.intent.category.LAUNCHER 1 | Out-Host
+Invoke-V0Adb -Target $target -Arguments @(
+    "shell",
+    "monkey",
+    "-p",
+    $PackageName,
+    "-c",
+    "android.intent.category.LAUNCHER",
+    "1"
+) | Out-Host
 
 Write-Host "Installed and launched. Enable Accessibility and Notification Listener permissions from the App before V0 tests."

@@ -25,6 +25,7 @@
 | 非通话“接受”按钮页面 | 不点击 |  | `local_reject_not_incoming_call_window` 或无点击日志 |  |
 | 一键拨出语音 | 只拨白名单联系人 |  | `outbound_requested`, `outbound_click_final_call` |  |
 | 一键拨出视频 | 只拨白名单联系人 |  | `outbound_requested`, `outbound_click_final_call` |  |
+| 一键拨出从错误页面启动 | 不输入、不点击 |  | `wechat_home_not_confirmed`，无 `outbound_set_search_text` |  |
 | 错误页面/找不到按钮 | 停止并记录原因 |  | `outbound_waiting`, `outbound_failed`, `outbound_rejected` |  |
 
 ## 风险与结论

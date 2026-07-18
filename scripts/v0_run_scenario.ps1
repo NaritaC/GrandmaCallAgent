@@ -9,10 +9,12 @@ param(
         "NonCallAccept",
         "OutboundVoice",
         "OutboundVideo",
+        "OutboundWrongPage",
         "OutboundCancel"
     )]
     [string]$Scenario,
     [string]$PackageName = "com.grandmacallagent.bridge",
+    [string]$Serial = "",
     [switch]$SkipClear,
     [switch]$SkipEvidence,
     [switch]$SkipPreflight,
@@ -91,6 +93,7 @@ switch ($Scenario) {
     "OutboundVoice" {
         $required = @("outbound_requested", "outbound_launch_wechat", "callType=voice", "outbound_click_final_call")
         $steps = @(
+            "Before starting, leave WeChat on its main tab page; do not leave it on a chat, payment, transfer, red packet, or delete-related page.",
             "Open GrandmaBridge and enter a whitelisted WeChat display name in the outbound field.",
             "Tap '一键拨出微信语音'.",
             "Watch the screen. If it enters the wrong contact or page, tap '停止一键拨出' or disable Accessibility."
@@ -99,9 +102,19 @@ switch ($Scenario) {
     "OutboundVideo" {
         $required = @("outbound_requested", "outbound_launch_wechat", "callType=video", "outbound_click_final_call")
         $steps = @(
+            "Before starting, leave WeChat on its main tab page; do not leave it on a chat, payment, transfer, red packet, or delete-related page.",
             "Open GrandmaBridge and enter a whitelisted WeChat display name in the outbound field.",
             "Tap '一键拨出微信视频'.",
             "Watch the screen. If it enters the wrong contact or page, tap '停止一键拨出' or disable Accessibility."
+        )
+    }
+    "OutboundWrongPage" {
+        $required = @("outbound_requested", "outbound_launch_wechat", "wechat_home_not_confirmed")
+        $forbidden = @("outbound_set_search_text", "outbound_click_contact", "outbound_click_final_call")
+        $steps = @(
+            "Leave WeChat on a harmless test chat page. Do not use a payment, transfer, red packet, or delete-related page.",
+            "Return to GrandmaBridge, enter a whitelisted test contact, and tap either outbound call button.",
+            "Confirm no text is entered and no contact or call action is clicked, then return to GrandmaBridge and tap '停止一键拨出'."
         )
     }
     "OutboundCancel" {
@@ -116,6 +129,9 @@ switch ($Scenario) {
 
 Write-Host "V0 scenario: $Scenario"
 Write-Host "Package: $PackageName"
+if (-not [string]::IsNullOrWhiteSpace($Serial)) {
+    Write-Host "Device serial: $Serial"
+}
 Write-Host "Safety: this script does not operate WeChat UI. It only clears logs, waits for your manual test, asserts logs, and optionally collects evidence."
 Show-Steps -Steps $steps
 Write-Host ""
@@ -128,25 +144,25 @@ if ($PlanOnly) {
 }
 
 if (-not $SkipPreflight) {
-    & (Join-Path $ScriptDir "v0_device_preflight.ps1") -PackageName $PackageName -AssertReady
+    & (Join-Path $ScriptDir "v0_device_preflight.ps1") -PackageName $PackageName -Serial $Serial -AssertReady
 }
 
 if (-not $SkipClear) {
-    & (Join-Path $ScriptDir "v0_clear_logs.ps1") -PackageName $PackageName
+    & (Join-Path $ScriptDir "v0_clear_logs.ps1") -PackageName $PackageName -Serial $Serial
 }
 
 Read-Host "Press Enter after completing the manual steps above"
 
 $assertFailed = $false
 try {
-    & (Join-Path $ScriptDir "v0_assert_log.ps1") -PackageName $PackageName -Required $required -Forbidden $forbidden
+    & (Join-Path $ScriptDir "v0_assert_log.ps1") -PackageName $PackageName -Serial $Serial -Required $required -Forbidden $forbidden
 } catch {
     $assertFailed = $true
     Write-Host $_
 }
 
 if (-not $SkipEvidence) {
-    & (Join-Path $ScriptDir "v0_collect_evidence.ps1") -PackageName $PackageName
+    & (Join-Path $ScriptDir "v0_collect_evidence.ps1") -PackageName $PackageName -Serial $Serial
 }
 
 if ($assertFailed) {

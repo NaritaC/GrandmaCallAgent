@@ -266,3 +266,20 @@ This document records durable discussion decisions and project progress. Use ISO
 - Summary: Added a host-side preflight script for CLI phone validation. It checks the Android project files, Java, ADB, and Gradle wrapper/global Gradle before attempting build/install workflows, and documents when Android Studio should be used instead.
 - Artifacts: `scripts/v0_host_preflight.ps1`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `README.md`, `docs/PROJECT_LOG.md`
 - Verification: All PowerShell scripts parsed successfully; `scripts/v0_host_preflight.ps1` ran locally and correctly reported Java present but ADB/Gradle unavailable; `git diff --check` passed.
+
+### 2026-07-16T22:32:43+08:00 - V0 host preflight pushed
+
+- Category: workflow
+- Summary: Pushed the V0 host-side preflight script and validation documentation updates to GitHub.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: `git diff --cached --check` passed before commit; push completed to `origin/main`.
+- Commit: `59e9737 Add V0 host preflight checks`
+- Result: Pushed to `origin/main`.
+
+### 2026-07-19T00:46:56+08:00 - Grill Me skill installed globally
+
+- Category: tooling
+- Summary: Confirmed that `grill-me` was not installed, then installed the official `mattpocock/skills` `grill-me` entry point and its required `grilling` implementation for Codex at user scope.
+- Artifacts: `C:\Users\Narita\.agents\skills\grill-me\SKILL.md`, `C:\Users\Narita\.agents\skills\grilling\SKILL.md`, `docs/PROJECT_LOG.md`
+- Verification: Both skill files exist and their metadata and instructions were read successfully. The installer reported safe/low-risk assessments for both. Its PromptScript compatibility warning does not affect the successful Codex installation.
+- Next step: Start a new Codex turn or session so the newly installed skills are discovered.

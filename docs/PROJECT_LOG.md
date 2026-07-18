@@ -300,3 +300,20 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/accessibility/`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/safety/SafetyGate.kt`, `GrandmaBridge/app/src/main/java/com/grandmacallagent/bridge/v0/V0AutomationRuntime.kt`, `GrandmaBridge/app/src/test/`, `scripts/v0_*.ps1`, `README.md`, `docs/LOCAL_RUN.md`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `docs/V0_AUTOMATION_VALIDATION.md`, `docs/V0_TEST_RECORD_TEMPLATE.md`, `docs/PROJECT_LOG.md`
 - Verification: `scripts/v0_self_test.ps1` passed all PowerShell parse, ADB selection, and 10 scenario-plan checks; `scripts/v0_run_scenario.ps1 -Scenario OutboundWrongPage -PlanOnly` passed; `git diff --check` passed. Host preflight confirmed project files and Java but reported ADB and Gradle unavailable. Android unit tests were not run because this host has no Android SDK, Gradle, or Kotlin compiler. Server tests were not run because the current Python environment has no `pytest`; server code was unchanged.
 - Next step: Build and run Android unit tests in Android Studio, install the debug app on a backup/test phone, then execute the phone scenarios in `docs/V0_PHONE_VALIDATION.md`, beginning with negative tests before live outbound calls.
+
+### 2026-07-19T01:20:22+08:00 - V0 phone automation hardening pushed
+
+- Category: workflow
+- Summary: Pushed the V0 outbound safety state machine, tests, ADB tooling, and phone validation documentation to GitHub.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: `git diff --cached --check` and `scripts/v0_self_test.ps1` passed before commit; push completed to `origin/main`.
+- Commit: `6c7b269 Harden V0 phone automation validation`
+- Result: Pushed to `origin/main`.
+
+### 2026-07-19T01:28:21+08:00 - Android V0 CI and supported build versions added
+
+- Category: build
+- Summary: Added a repository-level Android CI job that installs JDK 17, Android SDK/API 35, and Gradle 8.9, then runs local unit tests and builds the debug APK. Updated the project from AGP 8.5.2/Kotlin 2.0.21 to AGP 8.7.2/Kotlin 2.1.21 because AGP 8.5 officially supports only API 34 while this project compiles and targets API 35. The selected versions are within the documented Kotlin and AGP compatibility ranges.
+- Artifacts: `.github/workflows/android-v0.yml`, `GrandmaBridge/build.gradle.kts`, `docs/PROJECT_LOG.md`
+- Verification: Workflow YAML parsed successfully with PyYAML; `git diff --check` and `scripts/v0_self_test.ps1` passed locally. The CI job has read-only repository permissions and only uploads unit-test reports and an unsigned debug APK; it does not publish, sign, or deploy. The Android SDK setup action accepts SDK licenses on the temporary GitHub runner.
+- Next step: Push the workflow, inspect the first GitHub Actions run, and fix any compile or test failure before treating Android build verification as complete.

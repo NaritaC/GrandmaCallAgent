@@ -317,3 +317,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `.github/workflows/android-v0.yml`, `GrandmaBridge/build.gradle.kts`, `docs/PROJECT_LOG.md`
 - Verification: Workflow YAML parsed successfully with PyYAML; `git diff --check` and `scripts/v0_self_test.ps1` passed locally. The CI job has read-only repository permissions and only uploads unit-test reports and an unsigned debug APK; it does not publish, sign, or deploy. The Android SDK setup action accepts SDK licenses on the temporary GitHub runner.
 - Next step: Push the workflow, inspect the first GitHub Actions run, and fix any compile or test failure before treating Android build verification as complete.
+
+### 2026-07-19T01:34:12+08:00 - First Android V0 CI failure inspected
+
+- Category: verification
+- Summary: Pushed commit `03c2c9b Add Android V0 build verification` and inspected GitHub Actions run `29654015698`. JDK, Android SDK 35, and Gradle 8.9 setup all passed; the unit-test/APK build step failed with exit code 1 before a test report or APK was produced.
+- Artifacts: `.github/workflows/android-v0.yml`, `docs/PROJECT_LOG.md`
+- Verification: Public GitHub Actions jobs and check annotations confirmed the failed build step. Full job-log download requires authenticated repository administration, and the original check annotation contained only the process exit code. Updated the workflow to expose the final Gradle output in a Check annotation and Job Summary and moved artifact uploads to Node 24-based `actions/upload-artifact@v7`.
+- Next step: Push the diagnostic workflow, inspect its public Check annotation, and fix the underlying Gradle or Kotlin error.

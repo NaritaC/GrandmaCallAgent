@@ -49,11 +49,39 @@ jobs:
           cache-provider: basic
 
       - name: Run unit tests and build debug APK
-        run: gradle --no-daemon --stacktrace :app:testDebugUnitTest :app:assembleDebug
+        shell: bash
+        run: |
+          set +e
+          gradle --no-daemon --stacktrace :app:testDebugUnitTest :app:assembleDebug 2>&1 | tee android-v0-build.log
+          status=${PIPESTATUS[0]}
+          if [[ $status -ne 0 ]]; then
+            {
+              echo "### Android V0 build failure"
+              echo '```text'
+              tail -n 120 android-v0-build.log
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+
+            details=$(tail -n 60 android-v0-build.log)
+            details=${details//'%'/'%25'}
+            details=${details//$'\r'/'%0D'}
+            details=${details//$'\n'/'%0A'}
+            echo "::error title=Android V0 build failed::$details"
+            exit "$status"
+          fi
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-v0-build-log
+          path: GrandmaBridge/android-v0-build.log
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Upload unit test report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-v0-unit-test-report
           path: GrandmaBridge/app/build/reports/tests/testDebugUnitTest
@@ -62,7 +90,7 @@ jobs:
 
       - name: Upload debug APK
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: GrandmaBridge-debug
           path: GrandmaBridge/app/build/outputs/apk/debug/app-debug.apk

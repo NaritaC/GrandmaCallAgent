@@ -52,17 +52,27 @@ jobs:
         shell: bash
         run: |
           set +e
-          gradle --no-daemon --stacktrace :app:testDebugUnitTest :app:assembleDebug 2>&1 | tee android-v0-build.log
+          gradle --no-daemon --console=plain :app:testDebugUnitTest :app:assembleDebug 2>&1 | tee android-v0-build.log
           status=${PIPESTATUS[0]}
           if [[ $status -ne 0 ]]; then
             {
               echo "### Android V0 build failure"
               echo '```text'
-              tail -n 120 android-v0-build.log
+              grep -n -E -B 2 -A 12 '(^e: |^error:|FAILURE:|^\* What went wrong:|Execution failed for task|Could not (resolve|determine)|A problem occurred|Caused by:)' android-v0-build.log || true
+              echo
+              echo "Final Gradle output:"
+              tail -n 80 android-v0-build.log
               echo '```'
             } >> "$GITHUB_STEP_SUMMARY"
 
-            details=$(tail -n 60 android-v0-build.log)
+            details=$(
+              {
+                grep -n -E -B 2 -A 12 '(^e: |^error:|FAILURE:|^\* What went wrong:|Execution failed for task|Could not (resolve|determine)|A problem occurred|Caused by:)' android-v0-build.log || true
+                echo
+                echo "Final Gradle output:"
+                tail -n 40 android-v0-build.log
+              } | tail -n 120
+            )
             details=${details//'%'/'%25'}
             details=${details//$'\r'/'%0D'}
             details=${details//$'\n'/'%0A'}

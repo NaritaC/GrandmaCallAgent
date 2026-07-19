@@ -325,3 +325,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `.github/workflows/android-v0.yml`, `docs/PROJECT_LOG.md`
 - Verification: Public GitHub Actions jobs and check annotations confirmed the failed build step. Full job-log download requires authenticated repository administration, and the original check annotation contained only the process exit code. Updated the workflow to expose the final Gradle output in a Check annotation and Job Summary and moved artifact uploads to Node 24-based `actions/upload-artifact@v7`.
 - Next step: Push the diagnostic workflow, inspect its public Check annotation, and fix the underlying Gradle or Kotlin error.
+
+### 2026-07-20T00:12:34+08:00 - Second Android V0 CI failure narrowed to the build step
+
+- Category: verification
+- Summary: Pushed commit `dba63c5 Expose Android CI build failures` and inspected GitHub Actions run `29659244272`. JDK 17, Android SDK 35, Gradle 8.9, and build-log artifact upload succeeded; `:app:testDebugUnitTest :app:assembleDebug` still failed before an APK was produced.
+- Artifacts: `.github/workflows/android-v0.yml`, `docs/PROJECT_LOG.md`
+- Verification: Public job steps and Check annotations confirmed the failing build step. The uploaded log artifact exists, but GitHub requires authentication to download artifact contents even for this public repository. The previous annotation contained only the end of the Gradle stack trace, so the workflow now uses plain, non-stacktrace output and publishes matched compiler/root-cause lines plus the final Gradle output.
+- Next step: Push the refined diagnostic workflow, read the public root-cause annotation, then correct and rerun the Android build.

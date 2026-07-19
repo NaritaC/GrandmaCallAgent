@@ -341,3 +341,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `GrandmaBridge/app/build.gradle.kts`, `.github/workflows/android-v0.yml`, `docs/PROJECT_LOG.md`
 - Verification: The third run passed JDK, Android SDK, and Gradle setup, then failed specifically at `:app:compileDebugKotlin` before tests or APK assembly. The configuration change follows the compiler's fail-fast guidance and keeps all runtime behavior unchanged.
 - Next step: Push the JVM target fix and rerun Android unit tests and debug APK assembly in CI.
+
+### 2026-07-20T00:21:44+08:00 - Android V0 unit tests and debug build passed in CI
+
+- Category: verification
+- Summary: Pushed commit `81c31e3 Align Android JVM targets`; GitHub Actions run `29694600893` completed successfully. Documented the reproducible CI command and separated build verification from the still-pending WeChat phone acceptance tests.
+- Artifacts: `GrandmaBridge/app/build.gradle.kts`, `.github/workflows/android-v0.yml`, `README.md`, `docs/LOCAL_RUN.md`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `docs/PROJECT_LOG.md`
+- Verification: The Android build step successfully ran `:app:testDebugUnitTest :app:assembleDebug`. All workflow steps passed, including uploads of `android-v0-build-log`, `android-v0-unit-test-report`, and `GrandmaBridge-debug`; the APK artifact size reported by GitHub was 2,189,665 bytes.
+- Next step: Install the debug build on a backup/test phone and execute the negative scenarios first, followed by whitelist voice/video incoming calls and supervised one-tap outbound tests.

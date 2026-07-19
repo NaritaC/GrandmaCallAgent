@@ -27,8 +27,9 @@
 
 - [ ] App 能保存本地白名单。
 - [ ] 自动接听总开关默认关闭。
-- [ ] `scripts/v0_self_test.ps1` 通过，确认脚本语法、ADB 设备选择和全部场景计划可执行。
-- [ ] Android 本地单元测试通过，覆盖 `SafetyGate`、来电解析和拨出页面策略。
+- [x] `scripts/v0_self_test.ps1` 通过，确认脚本语法、ADB 设备选择和全部场景计划可执行。
+- [x] Android 单元测试通过，覆盖 `SafetyGate`、来电解析和拨出页面策略（GitHub Actions run `29694600893`）。
+- [x] CI 使用 JDK 17、Android SDK 35 和 Gradle 8.9 成功执行 debug APK 构建，并上传测试报告与未签名 APK（GitHub Actions run `29694600893`）。
 - [ ] 自动接听总开关关闭时，白名单来电也不会自动接听，并记录 `auto_answer_disabled`。
 - [ ] 如使用命令行安装，`scripts/v0_host_preflight.ps1 -AssertReady` 通过，确认 Java、ADB、Gradle wrapper 或全局 Gradle 就绪。
 - [ ] `scripts/v0_build_install.ps1` 能在具备 Gradle/ADB 的电脑上安装并启动 App，或已通过 Android Studio 完成等价操作。

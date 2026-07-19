@@ -4,7 +4,7 @@
 
 建议用 [V0 验证记录模板](V0_TEST_RECORD_TEMPLATE.md) 记录每次真机结果。记录中只写联系人代号，不写真实微信昵称。
 
-当前构建状态：提交 `81c31e3` 已在 GitHub Actions 中通过 Android 单元测试和 debug APK 构建。微信来电识别、接听及拨出仍必须按本文在目标手机、ROM 和微信版本上验证，尚不能仅凭 CI 判定 V0 验收通过。
+当前构建状态：提交 `ce7925e` 已在 GitHub Actions run `29695704802` 中通过 Gradle Wrapper 校验、Android 单元测试、Lint 和 debug APK 构建。微信来电识别、接听及拨出仍必须按本文在目标手机、ROM 和微信版本上验证，尚不能仅凭 CI 判定 V0 验收通过。
 
 ## 安全警示
 

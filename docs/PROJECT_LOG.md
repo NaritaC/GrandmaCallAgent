@@ -365,3 +365,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `GrandmaBridge/gradlew`, `GrandmaBridge/gradlew.bat`, `GrandmaBridge/gradle/wrapper/`, `.github/workflows/android-v0.yml`, `GrandmaBridge/app/`, `scripts/v0_*.ps1`, `README.md`, `docs/LOCAL_RUN.md`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `docs/V0_TEST_RECORD_TEMPLATE.md`, `docs/ARCHITECTURE.md`, `docs/PERMISSIONS.md`, `docs/PROJECT_LOG.md`
 - Verification: The Wrapper JAR SHA-256 matched Gradle's official checksum `498495120a03b9a6ab5d155f5de3c8f0d986a449153702fb80fc80e134484f17`; the distribution checksum is pinned in Wrapper properties. `gradlew.bat --version` downloaded and launched Gradle 8.9 on JDK 21. `scripts/v0_self_test.ps1` passed Java parsing, ADB discovery/selection, script parsing, and all 10 scenario plans. Host preflight now finds the Wrapper and correctly reports only ADB missing on this machine.
 - Next step: Push the changes, require the updated Android CI including Lint to pass, then proceed to backup-phone validation.
+
+### 2026-07-20T00:55:20+08:00 - Hardened V0 Android verification passed
+
+- Category: verification
+- Summary: Pushed commit `ce7925e Harden V0 phone validation tooling`; GitHub Actions run `29695704802` passed the expanded Android verification workflow.
+- Artifacts: `.github/workflows/android-v0.yml`, `GrandmaBridge/gradle/wrapper/`, `GrandmaBridge/app/`, `scripts/v0_*.ps1`, `docs/PROJECT_LOG.md`
+- Verification: Gradle Wrapper validation, JDK 17 setup, Android SDK 35 setup, unit tests, `lintDebug`, and `assembleDebug` all succeeded. GitHub published four non-expired artifacts: build log, unit-test report, Lint report, and `GrandmaBridge-debug`; the APK artifact size was 2,189,675 bytes.
+- Next step: Install this build on a backup/test phone, run `scripts/v0_device_preflight.ps1 -AssertReady`, then execute negative scenarios before any whitelist call scenario.

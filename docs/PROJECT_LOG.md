@@ -333,3 +333,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `.github/workflows/android-v0.yml`, `docs/PROJECT_LOG.md`
 - Verification: Public job steps and Check annotations confirmed the failing build step. The uploaded log artifact exists, but GitHub requires authentication to download artifact contents even for this public repository. The previous annotation contained only the end of the Gradle stack trace, so the workflow now uses plain, non-stacktrace output and publishes matched compiler/root-cause lines plus the final Gradle output.
 - Next step: Push the refined diagnostic workflow, read the public root-cause annotation, then correct and rerun the Android build.
+
+### 2026-07-20T00:17:01+08:00 - Android JVM targets aligned after third CI run
+
+- Category: build
+- Summary: Pushed commit `5412439 Refine Android CI failure diagnostics` and inspected GitHub Actions run `29694478749`. The new public annotation identified an inconsistent JVM target: Android Java compilation used 1.8 while Kotlin compilation used 17. Configured the app module's Java source/target compatibility and Kotlin JVM toolchain to 17.
+- Artifacts: `GrandmaBridge/app/build.gradle.kts`, `.github/workflows/android-v0.yml`, `docs/PROJECT_LOG.md`
+- Verification: The third run passed JDK, Android SDK, and Gradle setup, then failed specifically at `:app:compileDebugKotlin` before tests or APK assembly. The configuration change follows the compiler's fail-fast guidance and keeps all runtime behavior unchanged.
+- Next step: Push the JVM target fix and rerun Android unit tests and debug APK assembly in CI.

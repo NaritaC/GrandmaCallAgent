@@ -6,3 +6,7 @@
 *.webp binary
 *.ico binary
 *.keystore binary
+
+/GrandmaBridge/gradlew text eol=lf
+/GrandmaBridge/gradlew.bat text eol=crlf
+/GrandmaBridge/gradle/wrapper/gradle-wrapper.jar binary

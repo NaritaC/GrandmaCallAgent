@@ -51,6 +51,21 @@ foreach ($file in $scriptFiles) {
 }
 Write-Host "PASS: parsed $($scriptFiles.Count) V0 PowerShell scripts"
 
+Assert-Equal -Expected 8 -Actual (
+    ConvertFrom-V0JavaMajorVersion -VersionText 'java version "1.8.0_402"'
+) -Name "parse legacy Java major version"
+Assert-Equal -Expected 21 -Actual (
+    ConvertFrom-V0JavaMajorVersion -VersionText 'java 21.0.8 2025-07-15 LTS'
+) -Name "parse current Java major version"
+
+$knownCandidate = (Resolve-Path -LiteralPath (Join-Path $ScriptDir "v0_common.ps1")).Path
+Assert-Equal -Expected $knownCandidate -Actual (
+    Resolve-V0AdbPath -AdditionalCandidates @($knownCandidate)
+) -Name "resolve explicit ADB candidate path"
+Assert-Throws -Action {
+    Resolve-V0ApkPath -ApkPath $knownCandidate
+} -ExpectedMessage "must be an .apk file" -Name "reject non-APK prebuilt package"
+
 $singleDeviceLines = @(
     "List of devices attached",
     "phone-001`tdevice product:test model:Test transport_id:1"

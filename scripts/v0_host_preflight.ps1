@@ -4,6 +4,9 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+
+. (Join-Path $ScriptDir "v0_common.ps1")
 
 function Find-CommandPath {
     param([string]$Name)
@@ -32,7 +35,11 @@ if ($projectPath) {
         "settings.gradle.kts",
         "build.gradle.kts",
         "app/build.gradle.kts",
-        "app/src/main/AndroidManifest.xml"
+        "app/src/main/AndroidManifest.xml",
+        "gradlew",
+        "gradlew.bat",
+        "gradle/wrapper/gradle-wrapper.jar",
+        "gradle/wrapper/gradle-wrapper.properties"
     )
 
     foreach ($relativePath in $requiredFiles) {
@@ -48,18 +55,28 @@ if ($projectPath) {
 
 $java = Find-CommandPath "java"
 if ($java) {
-    Write-Host "java: $java"
+    $javaVersionOutput = @(& $java -version 2>&1)
+    $javaMajorVersion = ConvertFrom-V0JavaMajorVersion -VersionText ($javaVersionOutput -join "`n")
+    if ($LASTEXITCODE -ne 0 -or $null -eq $javaMajorVersion) {
+        Write-Host "java: $java (version unknown)"
+        $failures += "Unable to determine the Java version. JDK 17 or newer is required."
+    } elseif ($javaMajorVersion -lt 17) {
+        Write-Host "java: $java (major=$javaMajorVersion)"
+        $failures += "Java $javaMajorVersion is too old. JDK 17 or newer is required."
+    } else {
+        Write-Host "java: $java (major=$javaMajorVersion)"
+    }
 } else {
     Write-Host "java: missing"
-    $failures += "java was not found on PATH."
+    $failures += "java was not found on PATH. JDK 17 or newer is required."
 }
 
-$adb = Find-CommandPath "adb"
+$adb = Resolve-V0AdbPath
 if ($adb) {
     Write-Host "adb: $adb"
 } else {
     Write-Host "adb: missing"
-    $failures += "adb was not found on PATH. Install Android Studio Platform Tools and add adb to PATH."
+    $failures += "adb was not found on PATH or in the Android Studio default SDK location. Install Android Studio Platform Tools or set ANDROID_SDK_ROOT/ANDROID_HOME."
 }
 
 $gradleWrapper = if ($projectPath) { Join-Path $projectPath "gradlew.bat" } else { $null }

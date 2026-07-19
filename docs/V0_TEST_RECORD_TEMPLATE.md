@@ -21,7 +21,7 @@
 | 白名单语音来电 | 自动接听 |  | `incoming_allowed`, `accept_success` |  |
 | 白名单视频来电 | 自动接听 |  | `callType=video`, `accept_success` |  |
 | 非白名单来电 | 不自动接听 |  | `contact_not_in_local_whitelist` |  |
-| 微信支付/红包/转账页面 | 不点击 |  | `local_reject_high_risk_keyword` 或无点击日志 |  |
+| 普通测试聊天显示高风险关键词 | SafetyGate 拒绝且不点击 |  | `local_reject_high_risk_keyword`，无搜索/输入/联系人/通话点击日志 |  |
 | 非通话“接受”按钮页面 | 不点击 |  | `local_reject_not_incoming_call_window` 或无点击日志 |  |
 | 一键拨出语音 | 只拨白名单联系人 |  | `outbound_requested`, `outbound_click_final_call` |  |
 | 一键拨出视频 | 只拨白名单联系人 |  | `outbound_requested`, `outbound_click_final_call` |  |

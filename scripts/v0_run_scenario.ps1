@@ -75,11 +75,18 @@ switch ($Scenario) {
         )
     }
     "HighRiskPage" {
-        $forbidden = @("accept_success", "outbound_click_final_call")
+        $required = @("outbound_requested", "outbound_launch_wechat", "local_reject_high_risk_keyword")
+        $forbidden = @(
+            "accept_success",
+            "outbound_click_search",
+            "outbound_set_search_text",
+            "outbound_click_contact",
+            "outbound_click_final_call"
+        )
         $steps = @(
-            "Open a WeChat payment, red packet, transfer, bank card, or delete-related test page.",
-            "Do not perform any real payment, transfer, red packet, or delete action.",
-            "Confirm GrandmaBridge does not click anything on that page."
+            "In a harmless test chat, leave a visible message containing the text '转账'. Do not open WeChat Pay, a transfer form, a red packet, a bank card page, or a delete confirmation.",
+            "Return to GrandmaBridge, enter a whitelisted test contact, and tap either outbound call button.",
+            "Confirm automation stops before search, text entry, contact selection, or call actions. Disable Accessibility immediately if any click occurs."
         )
     }
     "NonCallAccept" {

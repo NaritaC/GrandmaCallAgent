@@ -30,6 +30,9 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v6
 
+      - name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v6
+
       - name: Set up JDK 17
         uses: actions/setup-java@v5
         with:
@@ -42,17 +45,16 @@ jobs:
           packages: "platform-tools platforms;android-35 build-tools;35.0.0"
           log-accepted-android-sdk-licenses: false
 
-      - name: Set up Gradle 8.9
+      - name: Set up Gradle cache
         uses: gradle/actions/setup-gradle@v6
         with:
-          gradle-version: "8.9"
           cache-provider: basic
 
-      - name: Run unit tests and build debug APK
+      - name: Run unit tests, lint, and build debug APK
         shell: bash
         run: |
           set +e
-          gradle --no-daemon --console=plain :app:testDebugUnitTest :app:assembleDebug 2>&1 | tee android-v0-build.log
+          ./gradlew --no-daemon --console=plain :app:testDebugUnitTest :app:lintDebug :app:assembleDebug 2>&1 | tee android-v0-build.log
           status=${PIPESTATUS[0]}
           if [[ $status -ne 0 ]]; then
             {
@@ -95,6 +97,15 @@ jobs:
         with:
           name: android-v0-unit-test-report
           path: GrandmaBridge/app/build/reports/tests/testDebugUnitTest
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload lint report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-v0-lint-report
+          path: GrandmaBridge/app/build/reports/lint-results-debug.html
           if-no-files-found: warn
           retention-days: 14
 

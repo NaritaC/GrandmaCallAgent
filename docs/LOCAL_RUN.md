@@ -12,10 +12,10 @@ Android 构建基线使用 JDK 17、Android SDK 35 和 Gradle 8.9。仓库的 [A
 
 ```powershell
 cd GrandmaBridge
-gradle --no-daemon --console=plain :app:testDebugUnitTest :app:assembleDebug
+.\gradlew.bat --no-daemon --console=plain :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
 ```
 
-提交 `81c31e3` 已通过该流程并生成测试报告和未签名 debug APK。CI 通过不代表微信 UI 自动化已通过真机验收。
+Wrapper 会校验 Gradle 8.9 发行包的 SHA-256。CI 通过不代表微信 UI 自动化已通过真机验收。
 
 然后用 Android Studio 打开 `GrandmaBridge/`，同步 Gradle 并安装到备用手机或测试手机。在 App 中：
 
@@ -24,13 +24,21 @@ gradle --no-daemon --console=plain :app:testDebugUnitTest :app:assembleDebug
 3. 保持自动接听开关关闭，先完成权限和负向场景检查。
 4. 测试时再打开自动接听开关，并按 [V0 手机验证指南](V0_PHONE_VALIDATION.md) 逐场景验证。
 
-具备 Java、Gradle 和 ADB 时也可使用：
+具备 JDK 17 或更高版本、Android SDK 35 和 ADB 时也可使用：
 
 ```powershell
 .\scripts\v0_host_preflight.ps1 -AssertReady
 .\scripts\v0_build_install.ps1
 .\scripts\v0_device_preflight.ps1 -AssertReady
 ```
+
+`v0_build_install.ps1` 默认用仓库 Wrapper 构建后安装。已有自己从本仓库 CI 或 Android Studio 生成并解压的 debug APK 时，也可跳过构建：
+
+```powershell
+.\scripts\v0_build_install.ps1 -ApkPath C:\path\to\app-debug.apk
+```
+
+不要安装来源不明的 APK。脚本会从 `PATH`、`ANDROID_SDK_ROOT`、`ANDROID_HOME` 或 Android Studio 默认 SDK 目录寻找 ADB。
 
 如果连接了多台 Android 设备，先运行 `adb devices`，再给所有设备脚本传入 `-Serial <deviceSerial>`。
 
@@ -90,7 +98,7 @@ cd GrandmaAgentServer
 pytest
 
 cd ..\GrandmaBridge
-gradle --no-daemon --console=plain :app:testDebugUnitTest :app:assembleDebug
+.\gradlew.bat --no-daemon --console=plain :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
 ```
 
-仓库当前没有 Gradle wrapper；本机没有兼容的全局 Gradle 时，请从 Android Studio 运行 Android 单元测试和 debug 构建。Android 端仍需结合真机和微信版本做手工测试，重点验证接听按钮、搜索框、联系人结果和音视频菜单文案。
+本机没有 Android SDK 35 时，请从已配置 SDK 的 Android Studio 运行 Android 单元测试、Lint 和 debug 构建。Android 端仍需结合真机和微信版本做手工测试，重点验证接听按钮、搜索框、联系人结果和音视频菜单文案。

@@ -89,6 +89,18 @@ class SafetyGateTest {
     }
 
     @Test
+    fun `rejects accept keyword embedded in another label`() {
+        val decision = SafetyGate.canClickAcceptWeChatCall(
+            packageName = "com.tencent.mm",
+            expectedContactName = "可信联系人",
+            visibleTexts = listOf("可信联系人", "语音通话", "拒绝接听"),
+        )
+
+        assertFalse(decision.allowed)
+        assertEquals("local_reject_not_incoming_call_window", decision.reason)
+    }
+
+    @Test
     fun `rejects non wechat package`() {
         val decision = SafetyGate.canOperateWeChatWindow("example.other", listOf("语音通话", "接听"))
 

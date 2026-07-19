@@ -47,7 +47,9 @@ object SafetyGate {
 
         val joined = visibleTexts.joinToString(" ")
         val hasIncomingCallSignal = incomingCallKeywords.any { joined.contains(it, ignoreCase = true) }
-        val hasAcceptSignal = acceptCallKeywords.any { joined.contains(it, ignoreCase = true) }
+        val hasAcceptSignal = visibleTexts.any { text ->
+            acceptCallKeywords.any { normalize(text) == normalize(it) }
+        }
         if (!hasIncomingCallSignal || !hasAcceptSignal) {
             return LocalSafetyDecision(false, "local_reject_not_incoming_call_window")
         }

@@ -6,8 +6,8 @@
 
 | 权限/服务 | 用途 | 风险控制 |
 | --- | --- | --- |
-| `android.permission.INTERNET` | 连接云端 WebSocket，上报心跳和接收命令 | 只连接用户配置的服务地址 |
-| `AccessibilityService` | 识别微信来电窗口并点击接听按钮 | 只处理 `com.tencent.mm`，只允许接听通话 |
+| `android.permission.INTERNET` | 为 V1 WebSocket 骨架预留 | V0 不启动网络 Runtime，且 Manifest 禁止明文流量；V1 必须使用受信任的 `wss://` 服务 |
+| `AccessibilityService` | 识别微信来电并执行接听或用户主动触发的一键拨出 | 只处理 `com.tencent.mm`；每次点击前执行 SafetyGate，接听按钮使用精确标签匹配 |
 | `NotificationListenerService` | 识别微信语音/视频来电通知 | 只读取通知标题和文本用于来电识别 |
 | `TextToSpeech` | 播报安全提示或执行结果 | 不需要额外危险权限 |
 

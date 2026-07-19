@@ -65,15 +65,74 @@ function Select-V0AdbSerial {
     throw "Multiple authorized Android devices are connected: $readySerials. Pass -Serial <deviceSerial>."
 }
 
+function ConvertFrom-V0JavaMajorVersion {
+    param([string]$VersionText)
+
+    if ($VersionText -match '(?i)version\s+"?1\.(\d+)') {
+        return [int]$Matches[1]
+    }
+    if ($VersionText -match '(?i)version\s+"?(\d+)') {
+        return [int]$Matches[1]
+    }
+    if ($VersionText -match '(?im)^(?:openjdk|java)\s+(\d+)') {
+        return [int]$Matches[1]
+    }
+    return $null
+}
+
+function Resolve-V0ApkPath {
+    param([Parameter(Mandatory = $true)][string]$ApkPath)
+
+    if (-not (Test-Path -LiteralPath $ApkPath -PathType Leaf)) {
+        throw "Prebuilt APK was not found: $ApkPath"
+    }
+    $resolved = (Resolve-Path -LiteralPath $ApkPath).Path
+    if ([System.IO.Path]::GetExtension($resolved) -ine ".apk") {
+        throw "Prebuilt package must be an .apk file: $resolved"
+    }
+    return $resolved
+}
+
+function Resolve-V0AdbPath {
+    param([string[]]$AdditionalCandidates = @())
+
+    foreach ($candidate in $AdditionalCandidates) {
+        if (-not [string]::IsNullOrWhiteSpace($candidate) -and (Test-Path -LiteralPath $candidate -PathType Leaf)) {
+            return (Resolve-Path -LiteralPath $candidate).Path
+        }
+    }
+
+    $command = Get-Command adb -ErrorAction SilentlyContinue
+    if ($command) {
+        return $command.Source
+    }
+
+    $adbFileName = if ($env:OS -eq "Windows_NT") { "adb.exe" } else { "adb" }
+    $sdkRoots = @($env:ANDROID_SDK_ROOT, $env:ANDROID_HOME)
+    if (-not [string]::IsNullOrWhiteSpace($env:LOCALAPPDATA)) {
+        $sdkRoots += (Join-Path $env:LOCALAPPDATA "Android\Sdk")
+    }
+
+    foreach ($sdkRoot in ($sdkRoots | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique)) {
+        $platformTools = Join-Path $sdkRoot "platform-tools"
+        $candidate = Join-Path $platformTools $adbFileName
+        if (Test-Path -LiteralPath $candidate -PathType Leaf) {
+            return (Resolve-Path -LiteralPath $candidate).Path
+        }
+    }
+
+    return $null
+}
+
 function Resolve-V0AdbTarget {
     param([string]$Serial = "")
 
-    $adb = Get-Command adb -ErrorAction SilentlyContinue
-    if (-not $adb) {
-        throw "adb not found. Install Android Studio Platform Tools and add adb to PATH."
+    $adbPath = Resolve-V0AdbPath
+    if (-not $adbPath) {
+        throw "adb not found. Install Android Studio Platform Tools or set ANDROID_SDK_ROOT/ANDROID_HOME."
     }
 
-    $deviceLines = @(& $adb.Source devices 2>&1)
+    $deviceLines = @(& $adbPath devices 2>&1)
     if ($LASTEXITCODE -ne 0) {
         throw "adb devices failed with exit code $LASTEXITCODE."
     }
@@ -82,7 +141,7 @@ function Resolve-V0AdbTarget {
     $selectedSerial = Select-V0AdbSerial -Devices $devices -Serial $Serial
 
     return [pscustomobject]@{
-        AdbPath = $adb.Source
+        AdbPath = $adbPath
         Serial = $selectedSerial
         Devices = $devices
         DeviceLines = $textLines

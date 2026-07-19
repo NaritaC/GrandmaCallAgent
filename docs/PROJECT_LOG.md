@@ -357,3 +357,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `README.md`, `docs/LOCAL_RUN.md`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `docs/PROJECT_LOG.md`
 - Verification: Commit `6e4dc2c Document Android V0 build verification` was pushed successfully. This documentation-only publication does not match the Android workflow trigger paths and therefore does not start another build.
 - Next step: Continue with supervised validation on a backup/test phone using `docs/V0_PHONE_VALIDATION.md`.
+
+### 2026-07-20T00:46:10+08:00 - V0 reproducible build and negative safety validation hardened
+
+- Category: implementation
+- Summary: Added a repository Gradle 8.9 Wrapper with distribution checksum verification, changed Android CI to validate the Wrapper and run unit tests, Lint, and debug assembly, added Android Studio SDK ADB discovery and trusted prebuilt APK installation, required exact accept-button labels, synchronized local log access, disabled cleartext traffic, and changed the high-risk phone scenario to actively exercise SafetyGate from a harmless chat page.
+- Artifacts: `GrandmaBridge/gradlew`, `GrandmaBridge/gradlew.bat`, `GrandmaBridge/gradle/wrapper/`, `.github/workflows/android-v0.yml`, `GrandmaBridge/app/`, `scripts/v0_*.ps1`, `README.md`, `docs/LOCAL_RUN.md`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `docs/V0_TEST_RECORD_TEMPLATE.md`, `docs/ARCHITECTURE.md`, `docs/PERMISSIONS.md`, `docs/PROJECT_LOG.md`
+- Verification: The Wrapper JAR SHA-256 matched Gradle's official checksum `498495120a03b9a6ab5d155f5de3c8f0d986a449153702fb80fc80e134484f17`; the distribution checksum is pinned in Wrapper properties. `gradlew.bat --version` downloaded and launched Gradle 8.9 on JDK 21. `scripts/v0_self_test.ps1` passed Java parsing, ADB discovery/selection, script parsing, and all 10 scenario plans. Host preflight now finds the Wrapper and correctly reports only ADB missing on this machine.
+- Next step: Push the changes, require the updated Android CI including Lint to pass, then proceed to backup-phone validation.

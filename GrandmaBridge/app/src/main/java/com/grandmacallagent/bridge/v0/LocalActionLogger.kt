@@ -9,6 +9,7 @@ object LocalActionLogger {
     private const val FILE_NAME = "v0_actions.log"
     private const val MAX_LINES = 300
 
+    @Synchronized
     fun append(context: Context, category: String, message: String) {
         val line = "${timestamp()} [$category] ${message.replace('\n', ' ')}"
         val file = logFile(context)
@@ -18,11 +19,13 @@ object LocalActionLogger {
         file.writeText(next.joinToString("\n") + "\n", Charsets.UTF_8)
     }
 
+    @Synchronized
     fun read(context: Context): String {
         val file = logFile(context)
         return if (file.exists()) file.readText(Charsets.UTF_8) else "暂无 V0 本地日志。"
     }
 
+    @Synchronized
     fun clear(context: Context) {
         logFile(context).writeText("", Charsets.UTF_8)
     }

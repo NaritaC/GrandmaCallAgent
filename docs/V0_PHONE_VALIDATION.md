@@ -32,7 +32,7 @@
 
 如果你只用 Android Studio 安装 App，可以跳过这一步。
 
-4. 连接测试手机，安装运行 `GrandmaBridge`。也可以在已配置 Gradle 和 ADB 的电脑上运行：
+4. 连接测试手机，安装运行 `GrandmaBridge`。在已配置 JDK 17+、Android SDK 35 和 ADB 的电脑上运行：
 
 ```powershell
 .\scripts\v0_build_install.ps1
@@ -40,7 +40,15 @@
 
 该脚本只构建、安装并启动 App，不会操作微信。
 
-5. 如果脚本提示没有 Gradle wrapper 或全局 `gradle`，请先用 Android Studio 打开 `GrandmaBridge/` 并从 IDE 运行 App。
+已有自己从本仓库 CI 或 Android Studio 生成并解压的 debug APK 时，可跳过本地构建：
+
+```powershell
+.\scripts\v0_build_install.ps1 -ApkPath C:\path\to\app-debug.apk
+```
+
+只使用本仓库 CI 或自己的 Android Studio 构建产物，不要安装来源不明的 APK。若脚本提示找不到 ADB，请在 Android Studio SDK Manager 中安装 Android SDK Platform-Tools；脚本会自动检查 `PATH`、SDK 环境变量和 Android Studio 默认 SDK 目录。
+
+5. 如果命令行仍不具备 Android SDK 35，请用 Android Studio 打开 `GrandmaBridge/` 并从 IDE 运行 App。
 6. 打开 App，进入 V0 验证面板。
 7. 保持“启用白名单来电自动接听”关闭，先完成白名单和权限配置。
 8. 在白名单输入框中填写允许自动接听的微信显示名，每行一个。
@@ -109,10 +117,17 @@
 
 ### 高风险页面负向测试
 
-1. 手动打开微信支付、红包、转账或删除相关页面。
-2. 不要发起真实支付或删除操作。
-3. 观察日志中不应出现 `accept_success` 或 `outbound_click_final_call`。
-4. 没有待执行通话任务时通常不会产生 SafetyGate 日志；验收重点是没有任何点击日志。若当时恰有待执行任务，则期望出现 `local_reject_high_risk_keyword` 并立即停止。
+1. 使用备用测试账号，在普通、无资金功能的测试聊天页中让屏幕显示一条含“转账”的测试文本。不要进入微信支付、转账表单、红包、银行卡或删除确认页面。
+2. 回到 GrandmaBridge，输入白名单测试联系人并点击任一一键拨出按钮。
+3. 期望日志包含 `outbound_requested`、`outbound_launch_wechat` 和 `local_reject_high_risk_keyword`。
+4. 日志不得出现 `outbound_click_search`、`outbound_set_search_text`、`outbound_click_contact`、`outbound_click_final_call` 或 `accept_success`。
+5. 如果发生任何点击，立即点击“停止一键拨出”并关闭无障碍服务，本轮判定失败。
+
+推荐直接运行：
+
+```powershell
+.\scripts\v0_run_scenario.ps1 -Scenario HighRiskPage
+```
 
 ### 非通话“接受”按钮负向测试
 
@@ -187,9 +202,9 @@ adb shell run-as com.grandmacallagent.bridge cat files/v0_actions.log
 .\scripts\v0_run_scenario.ps1 -Scenario WhitelistVoice
 ```
 
-- `v0_self_test.ps1`：不连接手机，检查全部 PowerShell 脚本语法、ADB 设备选择逻辑和所有场景的计划模式。
-- `v0_host_preflight.ps1`：检查电脑侧 Java、ADB、Gradle wrapper 或全局 Gradle，以及 Android 项目文件是否存在。加 `-AssertReady` 会在 CLI 构建安装条件不满足时失败。
-- `v0_build_install.ps1`：构建 debug APK、安装到连接的 Android 设备并启动 App。
+- `v0_self_test.ps1`：不连接手机，检查全部 PowerShell 脚本语法、Java 版本解析、ADB 路径/设备选择逻辑和所有场景的计划模式。
+- `v0_host_preflight.ps1`：检查电脑侧 JDK 17+、ADB、Gradle Wrapper 和 Android 项目文件。加 `-AssertReady` 会在 CLI 构建安装条件不满足时失败。
+- `v0_build_install.ps1`：默认用 Wrapper 构建 debug APK，再安装并启动 App；传入 `-ApkPath` 可安装已验证的预构建 APK。
 - `v0_device_preflight.ps1`：检查设备连接、App/微信是否安装、无障碍和通知权限是否启用。加 `-AssertReady` 会在缺少 App、微信、无障碍或通知权限时失败。
 - `v0_read_logs.ps1`：读取 `files/v0_actions.log`。
 - `v0_clear_logs.ps1`：清空 `files/v0_actions.log`。

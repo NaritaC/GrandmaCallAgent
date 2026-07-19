@@ -10,6 +10,7 @@ class WeChatCallParserTest {
     fun `detects video call only when call and accept signals coexist`() {
         assertTrue(WeChatCallParser.looksLikeIncomingCall(listOf("可信联系人", "视频通话", "接听")))
         assertFalse(WeChatCallParser.looksLikeIncomingCall(listOf("可信联系人", "接受邀请")))
+        assertFalse(WeChatCallParser.looksLikeIncomingCall(listOf("可信联系人", "语音通话", "拒绝接听")))
     }
 
     @Test

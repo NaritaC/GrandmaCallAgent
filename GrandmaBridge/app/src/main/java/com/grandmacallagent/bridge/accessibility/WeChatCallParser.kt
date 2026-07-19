@@ -4,7 +4,9 @@ object WeChatCallParser {
     fun looksLikeIncomingCall(texts: List<String>): Boolean {
         val joined = texts.joinToString(" ")
         val hasCall = CALL_KEYWORDS.any { joined.contains(it, ignoreCase = true) }
-        val hasAccept = ACCEPT_KEYWORDS.any { joined.contains(it, ignoreCase = true) }
+        val hasAccept = texts.any { text ->
+            ACCEPT_KEYWORDS.any { normalize(text) == normalize(it) }
+        }
         return hasCall && hasAccept
     }
 
@@ -53,6 +55,10 @@ object WeChatCallParser {
             .removePrefix("来自")
             .removePrefix("from")
             .trim()
+    }
+
+    private fun normalize(value: String): String {
+        return value.filterNot { it.isWhitespace() }.lowercase()
     }
 
     private val CALL_KEYWORDS = listOf("语音通话", "视频通话", "voice call", "video call")

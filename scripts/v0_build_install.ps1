@@ -1,7 +1,8 @@
 param(
     [string]$ProjectDir = "GrandmaBridge",
     [string]$PackageName = "com.grandmacallagent.bridge",
-    [string]$Serial = ""
+    [string]$Serial = "",
+    [string]$ApkPath = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -26,27 +27,37 @@ function Resolve-GradleCommand {
 }
 
 $root = Resolve-Path $ProjectDir
+$apk = if ([string]::IsNullOrWhiteSpace($ApkPath)) {
+    $null
+} else {
+    Resolve-V0ApkPath -ApkPath $ApkPath
+}
 $target = Resolve-V0AdbTarget -Serial $Serial
-$gradleCommand = Resolve-GradleCommand $root.Path
 
 Write-Host "adb: $($target.AdbPath)"
 Write-Host "selected device: $($target.Serial)"
-Write-Host "gradle: $gradleCommand"
-Write-Host "Building debug APK..."
 
-Push-Location $root
-try {
-    & $gradleCommand ":app:assembleDebug"
-    if ($LASTEXITCODE -ne 0) {
-        throw "Gradle build failed with exit code $LASTEXITCODE."
+if ($null -eq $apk) {
+    $gradleCommand = Resolve-GradleCommand $root.Path
+    Write-Host "gradle: $gradleCommand"
+    Write-Host "Building debug APK..."
+
+    Push-Location $root
+    try {
+        & $gradleCommand ":app:assembleDebug"
+        if ($LASTEXITCODE -ne 0) {
+            throw "Gradle build failed with exit code $LASTEXITCODE."
+        }
+    } finally {
+        Pop-Location
     }
-} finally {
-    Pop-Location
-}
 
-$apk = Join-Path $root "app/build/outputs/apk/debug/app-debug.apk"
-if (-not (Test-Path $apk)) {
-    throw "Debug APK not found: $apk"
+    $apk = Join-Path $root "app/build/outputs/apk/debug/app-debug.apk"
+    if (-not (Test-Path -LiteralPath $apk -PathType Leaf)) {
+        throw "Debug APK not found: $apk"
+    }
+} else {
+    Write-Host "Using prebuilt APK; Gradle build skipped."
 }
 
 Write-Host "Installing APK: $apk"

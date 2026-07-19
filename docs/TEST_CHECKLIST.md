@@ -31,8 +31,8 @@
 - [x] Android 单元测试通过，覆盖 `SafetyGate`、来电解析和拨出页面策略（GitHub Actions run `29694600893`）。
 - [x] CI 使用 JDK 17、Android SDK 35 和 Gradle 8.9 成功执行 debug APK 构建，并上传测试报告与未签名 APK（GitHub Actions run `29694600893`）。
 - [ ] 自动接听总开关关闭时，白名单来电也不会自动接听，并记录 `auto_answer_disabled`。
-- [ ] 如使用命令行安装，`scripts/v0_host_preflight.ps1 -AssertReady` 通过，确认 Java、ADB、Gradle wrapper 或全局 Gradle 就绪。
-- [ ] `scripts/v0_build_install.ps1` 能在具备 Gradle/ADB 的电脑上安装并启动 App，或已通过 Android Studio 完成等价操作。
+- [ ] 如使用命令行安装，`scripts/v0_host_preflight.ps1 -AssertReady` 通过，确认 JDK 17+、ADB 和仓库 Gradle Wrapper 就绪。
+- [ ] `scripts/v0_build_install.ps1` 能构建、安装并启动 App，或使用 `-ApkPath` 安装本仓库 CI/Android Studio 生成的可信 APK。
 - [ ] `scripts/v0_device_preflight.ps1 -AssertReady` 通过，确认 App、微信、无障碍服务和通知监听权限均就绪。
 - [ ] App 能显示和清空本地日志。
 - [ ] 白名单联系人微信语音来电能自动接听，并记录 `accept_success`。
@@ -44,7 +44,7 @@
 - [ ] 一键拨出启动后，App 内“停止一键拨出”能取消 pending outbound 并记录 `outbound_cancelled`。
 - [ ] 一键拨出期间收到微信来电会先取消待拨任务，通话结束后不会恢复旧任务。
 - [ ] 一键拨出错误页面时能停止并记录失败原因。
-- [ ] 微信支付、红包、转账、删除相关页面不会触发任何点击。
+- [ ] `HighRiskPage` 在普通测试聊天显示“转账”文本时触发 `local_reject_high_risk_keyword`，且搜索、输入、联系人及通话点击日志全部不存在；不要进入真实资金或删除页面测试。
 - [ ] 非通话页面即使出现“接受”按钮，也不会被当成微信来电接听页。
 - [ ] 使用 `scripts/v0_assert_log.ps1` 对关键场景执行必需/禁止日志关键字断言。
 - [ ] 使用 `scripts/v0_run_scenario.ps1` 跑至少 `AutoAnswerOff`、`WhitelistVoice`、`WhitelistVideo`、`NonWhitelist`、`NonCallAccept`、`OutboundCancel` 六个场景。

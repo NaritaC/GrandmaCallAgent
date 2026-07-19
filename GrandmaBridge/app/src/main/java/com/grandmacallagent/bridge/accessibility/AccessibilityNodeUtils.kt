@@ -17,22 +17,7 @@ object AccessibilityNodeUtils {
 
     fun findAcceptButton(root: AccessibilityNodeInfo?): AccessibilityNodeInfo? {
         if (root == null) return null
-        return findClickableByLabels(root, ACCEPT_LABELS)
-    }
-
-    fun findClickableByLabels(root: AccessibilityNodeInfo?, labels: List<String>): AccessibilityNodeInfo? {
-        if (root == null) return null
-        var result: AccessibilityNodeInfo? = null
-        traverse(root) { node ->
-            if (result != null) return@traverse
-            val matched = labels.any { expected ->
-                nodeLabels(node).any { actual -> actual.contains(expected, ignoreCase = true) }
-            }
-            if (matched && node.isEnabled) {
-                result = firstClickableAncestor(node)
-            }
-        }
-        return result
+        return findClickableByExactLabels(root, ACCEPT_LABELS)
     }
 
     fun findClickableByExactLabels(root: AccessibilityNodeInfo?, labels: List<String>): AccessibilityNodeInfo? {

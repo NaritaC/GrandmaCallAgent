@@ -26,6 +26,14 @@
 
 3. 如果准备使用命令行构建安装，再检查电脑侧环境：
 
+Windows 主机没有 ADB 时，先阅读 [Android SDK License](https://developer.android.com/studio/terms)，明确接受后运行：
+
+```powershell
+.\scripts\v0_setup_platform_tools.ps1 -AcceptAndroidSdkLicense
+```
+
+该脚本固定 Google 稳定版 `37.0.0` 和官方校验值，只解压到已忽略的 `.tools/android-sdk/`，不修改系统 `PATH`。不接受该许可时不要运行，可改由符合你环境要求的设备管理方式完成安装与日志采集。
+
 ```powershell
 .\scripts\v0_host_preflight.ps1 -AssertReady
 ```
@@ -190,6 +198,7 @@ adb shell run-as com.grandmacallagent.bridge cat files/v0_actions.log
 
 ```powershell
 .\scripts\v0_host_preflight.ps1
+.\scripts\v0_setup_platform_tools.ps1 -AcceptAndroidSdkLicense
 .\scripts\v0_self_test.ps1
 .\scripts\v0_host_preflight.ps1 -AssertReady
 .\scripts\v0_build_install.ps1
@@ -202,6 +211,7 @@ adb shell run-as com.grandmacallagent.bridge cat files/v0_actions.log
 .\scripts\v0_run_scenario.ps1 -Scenario WhitelistVoice
 ```
 
+- `v0_setup_platform_tools.ps1`：Windows 可选工具；只有显式确认已接受 Android SDK License 才下载并校验 Google Platform-Tools，安装到仓库忽略目录。
 - `v0_self_test.ps1`：不连接手机，检查全部 PowerShell 脚本语法、Java 版本解析、ADB 路径/设备选择逻辑和所有场景的计划模式。
 - `v0_host_preflight.ps1`：检查电脑侧 JDK 17+、ADB、Gradle Wrapper 和 Android 项目文件。加 `-AssertReady` 会在 CLI 构建安装条件不满足时失败。
 - `v0_build_install.ps1`：默认用 Wrapper 构建 debug APK，再安装并启动 App；传入 `-ApkPath` 可安装已验证的预构建 APK。

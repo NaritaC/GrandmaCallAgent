@@ -381,3 +381,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `scripts/v0_self_test.ps1`, `docs/V0_PHONE_VALIDATION.md`, `docs/PROJECT_LOG.md`
 - Verification: The documented sequence now covers all 10 scenarios in an explicit low-to-high-risk order. The offline self-test parses the recommended-order code block and compares the entire ordered list, so omissions, additions, and reordering fail. `HighRiskPage` is explicitly treated as an expected SafetyGate rejection using harmless visible test text.
 - Next step: Install Android SDK Platform-Tools, connect and authorize a backup/test phone, then start with host and device preflight checks.
+
+### 2026-07-20T01:08:20+08:00 - Portable Platform-Tools setup prepared with license gate
+
+- Category: tooling
+- Summary: Added an optional Windows setup script for repository-local ADB. It pins Google stable Platform-Tools `37.0.0`, verifies the official repository checksum, installs only under ignored `.tools/android-sdk/`, and does not modify system `PATH`. Updated ADB discovery and host guidance for this location.
+- Artifacts: `scripts/v0_setup_platform_tools.ps1`, `scripts/v0_common.ps1`, `scripts/v0_host_preflight.ps1`, `.gitignore`, `README.md`, `docs/LOCAL_RUN.md`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `docs/PROJECT_LOG.md`
+- Verification: Google repository metadata identified stable Windows package `platform-tools_r37.0.0-win.zip` with checksum `f29bfb58d0d6f9a57d7dbcba6cc259f9ca6f58f1`. All 11 V0 scripts parsed, and the setup script correctly refused to install without `-AcceptAndroidSdkLicense`. Installation was not performed because the user has not explicitly accepted the third-party license.
+- Next step: Obtain explicit license acceptance and installation authorization, then run ADB version/device checks and continue phone preflight.

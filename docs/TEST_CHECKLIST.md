@@ -31,6 +31,7 @@
 - [x] Android 单元测试通过，覆盖 `SafetyGate`、来电解析和拨出页面策略（GitHub Actions run `29695704802`）。
 - [x] CI 校验 Gradle Wrapper，并使用 JDK 17、Android SDK 35 和 Gradle 8.9 成功执行 Lint 与 debug APK 构建，上传测试、Lint、构建日志和未签名 APK（GitHub Actions run `29695704802`）。
 - [ ] 自动接听总开关关闭时，白名单来电也不会自动接听，并记录 `auto_answer_disabled`。
+- [ ] 主机没有 ADB 时，已阅读并接受 Android SDK License 后运行 `scripts/v0_setup_platform_tools.ps1 -AcceptAndroidSdkLicense`，或通过 Android Studio SDK Manager 安装 Platform-Tools。
 - [ ] 如使用命令行安装，`scripts/v0_host_preflight.ps1 -AssertReady` 通过，确认 JDK 17+、ADB 和仓库 Gradle Wrapper 就绪。
 - [ ] `scripts/v0_build_install.ps1` 能构建、安装并启动 App，或使用 `-ApkPath` 安装本仓库 CI/Android Studio 生成的可信 APK。
 - [ ] `scripts/v0_device_preflight.ps1 -AssertReady` 通过，确认 App、微信、无障碍服务和通知监听权限均就绪。

@@ -76,7 +76,7 @@ if ($adb) {
     Write-Host "adb: $adb"
 } else {
     Write-Host "adb: missing"
-    $failures += "adb was not found on PATH or in the Android Studio default SDK location. Install Android Studio Platform Tools or set ANDROID_SDK_ROOT/ANDROID_HOME."
+    $failures += "adb was not found. Run scripts/v0_setup_platform_tools.ps1 or install Android Studio Platform-Tools."
 }
 
 $gradleWrapper = if ($projectPath) { Join-Path $projectPath "gradlew.bat" } else { $null }

@@ -16,3 +16,4 @@ GrandmaAgentServer/storage/*.jsonl
 GrandmaAgentServer/storage/whitelist.json
 
 artifacts/v0-evidence/
+.tools/

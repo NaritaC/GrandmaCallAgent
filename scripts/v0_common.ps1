@@ -109,6 +109,10 @@ function Resolve-V0AdbPath {
 
     $adbFileName = if ($env:OS -eq "Windows_NT") { "adb.exe" } else { "adb" }
     $sdkRoots = @($env:ANDROID_SDK_ROOT, $env:ANDROID_HOME)
+    if (-not [string]::IsNullOrWhiteSpace($PSScriptRoot)) {
+        $repoRoot = Split-Path -Parent $PSScriptRoot
+        $sdkRoots += (Join-Path $repoRoot ".tools\android-sdk")
+    }
     if (-not [string]::IsNullOrWhiteSpace($env:LOCALAPPDATA)) {
         $sdkRoots += (Join-Path $env:LOCALAPPDATA "Android\Sdk")
     }
@@ -129,7 +133,7 @@ function Resolve-V0AdbTarget {
 
     $adbPath = Resolve-V0AdbPath
     if (-not $adbPath) {
-        throw "adb not found. Install Android Studio Platform Tools or set ANDROID_SDK_ROOT/ANDROID_HOME."
+        throw "adb not found. Run scripts/v0_setup_platform_tools.ps1 or install Android Studio Platform-Tools."
     }
 
     $deviceLines = @(& $adbPath devices 2>&1)

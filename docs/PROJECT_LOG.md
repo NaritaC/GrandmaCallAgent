@@ -349,3 +349,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `GrandmaBridge/app/build.gradle.kts`, `.github/workflows/android-v0.yml`, `README.md`, `docs/LOCAL_RUN.md`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `docs/PROJECT_LOG.md`
 - Verification: The Android build step successfully ran `:app:testDebugUnitTest :app:assembleDebug`. All workflow steps passed, including uploads of `android-v0-build-log`, `android-v0-unit-test-report`, and `GrandmaBridge-debug`; the APK artifact size reported by GitHub was 2,189,665 bytes.
 - Next step: Install the debug build on a backup/test phone and execute the negative scenarios first, followed by whitelist voice/video incoming calls and supervised one-tap outbound tests.
+
+### 2026-07-20T00:25:42+08:00 - Android V0 build verification baseline published
+
+- Category: workflow
+- Summary: Published the successful Android V0 build baseline, reproducible local command, checklist status, and explicit phone-acceptance boundary to `origin/main`.
+- Artifacts: `README.md`, `docs/LOCAL_RUN.md`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `docs/PROJECT_LOG.md`
+- Verification: Commit `6e4dc2c Document Android V0 build verification` was pushed successfully. This documentation-only publication does not match the Android workflow trigger paths and therefore does not start another build.
+- Next step: Continue with supervised validation on a backup/test phone using `docs/V0_PHONE_VALIDATION.md`.

@@ -115,4 +115,33 @@ foreach ($scenario in $scenarios) {
     & (Join-Path $ScriptDir "v0_run_scenario.ps1") -Scenario $scenario -PlanOnly *> $null
 }
 Write-Host "PASS: planned $($scenarios.Count) V0 validation scenarios without ADB"
+
+$recommendedScenarios = @(
+    "AutoAnswerOff",
+    "NonWhitelist",
+    "NonCallAccept",
+    "OutboundWrongPage",
+    "HighRiskPage",
+    "OutboundCancel",
+    "WhitelistVoice",
+    "WhitelistVideo",
+    "OutboundVoice",
+    "OutboundVideo"
+)
+$phoneGuidePath = Join-Path (Split-Path -Parent $ScriptDir) "docs\V0_PHONE_VALIDATION.md"
+$phoneGuide = Get-Content -Raw -LiteralPath $phoneGuidePath
+$recommendedBlock = [regex]::Match(
+    $phoneGuide,
+    '(?s)如果使用场景化脚本，推荐顺序是：\s*```powershell\s*(.*?)```'
+)
+if (-not $recommendedBlock.Success) {
+    throw "Phone validation guide is missing the recommended scenario code block."
+}
+$documentedScenarios = @(
+    [regex]::Matches($recommendedBlock.Groups[1].Value, '-Scenario\s+([A-Za-z]+)') |
+        ForEach-Object { $_.Groups[1].Value }
+)
+Assert-Equal -Expected ($recommendedScenarios -join ',') -Actual (
+    $documentedScenarios -join ','
+) -Name "phone validation guide lists all scenarios in safe order"
 Write-Host "V0 script self-test passed."

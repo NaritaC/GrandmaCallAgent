@@ -234,17 +234,18 @@ adb shell run-as com.grandmacallagent.bridge cat files/v0_actions.log
 
 ```powershell
 .\scripts\v0_run_scenario.ps1 -Scenario AutoAnswerOff
-.\scripts\v0_run_scenario.ps1 -Scenario WhitelistVoice
-.\scripts\v0_run_scenario.ps1 -Scenario WhitelistVideo
 .\scripts\v0_run_scenario.ps1 -Scenario NonWhitelist
 .\scripts\v0_run_scenario.ps1 -Scenario NonCallAccept
 .\scripts\v0_run_scenario.ps1 -Scenario OutboundWrongPage
+.\scripts\v0_run_scenario.ps1 -Scenario HighRiskPage
 .\scripts\v0_run_scenario.ps1 -Scenario OutboundCancel
+.\scripts\v0_run_scenario.ps1 -Scenario WhitelistVoice
+.\scripts\v0_run_scenario.ps1 -Scenario WhitelistVideo
 .\scripts\v0_run_scenario.ps1 -Scenario OutboundVoice
 .\scripts\v0_run_scenario.ps1 -Scenario OutboundVideo
 ```
 
-最后三个场景风险更高，只在前面的负向场景全部通过后，使用备用手机、测试微信号并全程人工观察执行。
+`WhitelistVoice`、`WhitelistVideo`、`OutboundVoice` 和 `OutboundVideo` 会产生真实通话动作，只在前面的负向场景全部通过后，使用备用手机、测试微信号并全程人工观察执行。
 
 ## 失败排查
 
@@ -255,4 +256,4 @@ adb shell run-as com.grandmacallagent.bridge cat files/v0_actions.log
 - `wechat_home_not_confirmed`：微信不是已确认的主标签页；返回微信首页后重新开始，不要在当前页面强行重试。
 - `target_result_not_visible_exact`：搜索结果没有与白名单显示名精确一致的联系人；停止任务并核对昵称，不要改成模糊匹配。
 - `max_step_failures`：连续无法确认页面状态，任务已自动停止。
-- `local_reject_high_risk_keyword`：页面含高风险关键词，自动化已停止，先确认是否进入了支付/转账/删除相关页面。
+- `local_reject_high_risk_keyword`：页面含高风险关键词，自动化已停止；在 `HighRiskPage` 中这是期望结果，其它场景出现时不要继续，先退出当前页面并检查日志。

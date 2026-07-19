@@ -373,3 +373,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `.github/workflows/android-v0.yml`, `GrandmaBridge/gradle/wrapper/`, `GrandmaBridge/app/`, `scripts/v0_*.ps1`, `docs/PROJECT_LOG.md`
 - Verification: Gradle Wrapper validation, JDK 17 setup, Android SDK 35 setup, unit tests, `lintDebug`, and `assembleDebug` all succeeded. GitHub published four non-expired artifacts: build log, unit-test report, Lint report, and `GrandmaBridge-debug`; the APK artifact size was 2,189,675 bytes.
 - Next step: Install this build on a backup/test phone, run `scripts/v0_device_preflight.ps1 -AssertReady`, then execute negative scenarios before any whitelist call scenario.
+
+### 2026-07-20T01:00:38+08:00 - Phone scenario order completed
+
+- Category: documentation
+- Summary: Corrected the recommended phone-validation sequence to include all 10 scenarios and place every no-action negative scenario before whitelist auto-answer and live outbound calls.
+- Artifacts: `scripts/v0_self_test.ps1`, `docs/V0_PHONE_VALIDATION.md`, `docs/PROJECT_LOG.md`
+- Verification: The documented sequence now covers all 10 scenarios in an explicit low-to-high-risk order. The offline self-test parses the recommended-order code block and compares the entire ordered list, so omissions, additions, and reordering fail. `HighRiskPage` is explicitly treated as an expected SafetyGate rejection using harmless visible test text.
+- Next step: Install Android SDK Platform-Tools, connect and authorize a backup/test phone, then start with host and device preflight checks.

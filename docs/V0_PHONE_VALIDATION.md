@@ -45,11 +45,13 @@
 
 该安装脚本固定官方 Platform-Tools `37.0.0` 和校验值，只写入已忽略的 `.tools/`。未接受许可时不要运行，可改用 Android Studio SDK Manager。
 
-在手机“开发人员选项”中临时打开 USB 调试，连接后确认授权：
+在手机“开发人员选项”中临时打开 USB 调试，连接后确认授权。使用仓库安装的 Platform-Tools 时运行：
 
 ```powershell
-adb devices
+.\.tools\android-sdk\platform-tools\adb.exe devices
 ```
+
+使用 Android Studio 自带的 ADB 时也可以运行 `adb devices`，但先确认命令指向可信 SDK。手机状态必须是 `device`，不能是 `unauthorized`。
 
 多台设备同时连接时，后续命令都加 `-Serial <deviceSerial>`。
 
@@ -97,13 +99,19 @@ $gatePath = "artifacts/v0-call-snapshots/v0-a-gate.json"
 
 ## 3. 安装和配置 GrandmaBridge
 
-用 Android Studio 打开 `GrandmaBridge/` 并安装 debug 构建，或在具备 JDK 17+、Android SDK 35 和 ADB 时运行：
+提交 `443c0ec` 已在 [GitHub Actions run 29743623576](https://github.com/NaritaC/GrandmaCallAgent/actions/runs/29743623576) 通过单元测试、Lint 和 debug APK 构建。可以从该 run 下载 `GrandmaBridge-debug` artifact，解压后用仓库 ADB 安装，无需在本机安装完整 Android SDK 35：
+
+```powershell
+.\scripts\v0_build_install.ps1 -ApkPath C:\path\to\app-debug.apk
+```
+
+也可以用 Android Studio 打开 `GrandmaBridge/` 并安装，或在具备 JDK 17+、Android SDK 35 和 ADB 时本地构建：
 
 ```powershell
 .\scripts\v0_build_install.ps1
 ```
 
-只使用本仓库 CI 或自己的 Android Studio 构建产物。已有可信 APK 时可传 `-ApkPath C:\path\to\app-debug.apk`。
+只使用本仓库 CI 或自己的 Android Studio 构建产物。
 
 在 App 中：
 

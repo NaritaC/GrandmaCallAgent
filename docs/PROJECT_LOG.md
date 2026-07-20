@@ -454,3 +454,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: commit `443c0ec`, Android workflow run `29743623576`, `docs/PROJECT_LOG.md`
 - Verification: The workflow validated the Gradle Wrapper, provisioned JDK 17 and Android SDK 35, then passed `:app:testDebugUnitTest`, `:app:lintDebug`, and `:app:assembleDebug`; the debug APK artifact was produced. Local `scripts/v0_self_test.ps1` and `git diff --check` also passed before publication.
 - Next step: Obtain explicit Android SDK License acceptance before installing repository-local ADB, connect the target phone, and capture `Unlocked/Voice` with all automation Accessibility services disabled. Real-phone V0-A remains unverified.
+
+### 2026-07-20T20:53:30+08:00 - Phone bootstrap commands made directly executable
+
+- Category: documentation
+- Summary: Replaced the PATH-dependent `adb devices` instruction with the exact repository-local ADB path and documented how to install the verified `GrandmaBridge-debug` artifact from Android CI run `29743623576` without installing a full local Android SDK 35.
+- Artifacts: `docs/V0_PHONE_VALIDATION.md`, `docs/PROJECT_LOG.md`
+- Verification: The documented ADB path matches `scripts/v0_setup_platform_tools.ps1`; the referenced CI run passed for commit `443c0ec` and published the debug APK artifact.
+- Next step: After explicit Android SDK License acceptance, install Platform-Tools and begin the supervised read-only snapshot sequence.

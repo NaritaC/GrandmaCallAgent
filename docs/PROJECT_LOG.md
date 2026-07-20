@@ -397,3 +397,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `docs/PROJECT_LOG.md`
 - Verification: User explicitly confirmed the scope decision during the roadmap review. No runtime or roadmap implementation has been changed yet.
 - Next step: Identify the exact target device matrix and define measurable pass/fail criteria for the V0 gate.
+
+### 2026-07-20T18:00:53+08:00 - V0 whitelist identity boundary accepted
+
+- Category: decision
+- Summary: Accepted unique, family-managed WeChat contact remarks as the V0 whitelist key so the feasibility test can proceed quickly. Matching must remain exact and fail closed when the caller name is missing or ambiguous; a WeChat ID may be stored as auxiliary configuration but cannot be verified reliably from the incoming-call accessibility UI.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: User explicitly accepted this V0 limitation and prioritized a fast end-to-end validation before stronger identity work. Also clarified that only the GrandmaBridge receiving device must run Android; the caller may use any platform supported by WeChat, including iOS.
+- Next step: Select the first physical Android target and record its model, ROM/Android version, and WeChat version.

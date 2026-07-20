@@ -429,3 +429,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `docs/PROJECT_LOG.md`
 - Verification: User read the installed WeChat version from the target phone. No claim will be generalized to other phone, ROM, or WeChat versions until separately validated.
 - Next step: Confirm whether locked and screen-off incoming calls are part of the V0-A pass gate, then capture the initial unlocked incoming-call snapshot.
+
+### 2026-07-20T19:44:42+08:00 - Locked-screen V0-A requirement confirmed
+
+- Category: decision
+- Summary: Required V0-A to handle allowlisted WeChat calls while the target phone is unlocked, locked with the display on, and locked with the display off.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: User explicitly included locked and screen-off operation in the pass gate. An unlocked-only result may be retained as partial feasibility evidence but cannot pass V0-A.
+- Next step: Define the V1 Agent boundary, then publish the revised roadmap and execute the snapshot-first phone validation sequence.

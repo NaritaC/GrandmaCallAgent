@@ -4,10 +4,12 @@ name: Android V0
   push:
     paths:
       - "GrandmaBridge/**"
+      - "scripts/v0_verify_apk_safety.ps1"
       - ".github/workflows/android-v0.yml"
   pull_request:
     paths:
       - "GrandmaBridge/**"
+      - "scripts/v0_verify_apk_safety.ps1"
       - ".github/workflows/android-v0.yml"
   workflow_dispatch:
 
@@ -81,6 +83,14 @@ jobs:
             echo "::error title=Android V0 build failed::$details"
             exit "$status"
           fi
+
+      - name: Verify packaged V0-A safety boundaries
+        shell: pwsh
+        run: |
+          $aapt2 = Join-Path $env:ANDROID_HOME "build-tools/35.0.0/aapt2"
+          ../scripts/v0_verify_apk_safety.ps1 `
+            -ApkPath "app/build/outputs/apk/debug/app-debug.apk" `
+            -Aapt2Path $aapt2
 
       - name: Upload build log
         if: always()

@@ -62,6 +62,14 @@ Assert-Equal -Expected $true -Actual (
     $accessibilityConfig -match 'android:packageNames="com\.tencent\.mm"'
 ) -Name "scope V0 accessibility events to WeChat"
 
+$apkSafetyScript = Get-Content -Raw -LiteralPath (Join-Path $ScriptDir "v0_verify_apk_safety.ps1")
+Assert-Equal -Expected $true -Actual (
+    $apkSafetyScript -match 'dump",\s*"permissions"'
+) -Name "inspect permissions from packaged APK"
+Assert-Equal -Expected $true -Actual (
+    $apkSafetyScript -match 'res/xml/accessibility_service_config\.xml'
+) -Name "inspect Accessibility scope from packaged APK"
+
 Assert-Equal -Expected 8 -Actual (
     ConvertFrom-V0JavaMajorVersion -VersionText 'java version "1.8.0_402"'
 ) -Name "parse legacy Java major version"

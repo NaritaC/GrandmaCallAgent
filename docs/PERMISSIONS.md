@@ -8,7 +8,7 @@
 | `NotificationListenerService` | 从微信通知识别联系人和通话类型 | Android 授权范围是全部通知，但代码收到事件后立即拒绝非 `com.tencent.mm` 包；不持久化其它通知 |
 | `TextToSpeech` | 播报接听或拒绝结果 | 不需要额外危险权限 |
 
-V0-A Manifest **不声明 `INTERNET` 权限**，本地 Runtime 不启动 WebSocket。V1 若恢复联网能力，必须单独评审权限、认证、`wss://`、数据最小化和本地最终否决机制。
+V0-A Manifest **不声明任何 `uses-permission`**，本地 Runtime 不启动 WebSocket。CI 使用 AAPT2 审计最终 APK，防止依赖或 Manifest 合并意外引入权限。V1 若恢复联网能力，必须单独评审权限、认证、`wss://`、数据最小化和本地最终否决机制。
 
 ## 用户授权
 

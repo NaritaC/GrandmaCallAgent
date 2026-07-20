@@ -462,3 +462,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `docs/V0_PHONE_VALIDATION.md`, `docs/PROJECT_LOG.md`
 - Verification: The documented ADB path matches `scripts/v0_setup_platform_tools.ps1`; the referenced CI run passed for commit `443c0ec` and published the debug APK artifact.
 - Next step: After explicit Android SDK License acceptance, install Platform-Tools and begin the supervised read-only snapshot sequence.
+
+### 2026-07-20T20:58:45+08:00 - Final APK safety audit added to Android CI
+
+- Category: implementation
+- Summary: Added a cross-platform AAPT2 audit for the generated V0-A APK. The release gate rejects any packaged `uses-permission` entry and requires the compiled Accessibility configuration to contain exactly one `packageNames` attribute scoped to `com.tencent.mm`.
+- Artifacts: `scripts/v0_verify_apk_safety.ps1`, `.github/workflows/android-v0.yml`, `scripts/v0_self_test.ps1`, `docs/PERMISSIONS.md`, `docs/TEST_CHECKLIST.md`, `docs/PROJECT_LOG.md`
+- Verification: `scripts/v0_self_test.ps1` passed parsing for all 15 V0 scripts and confirmed both packaged-APK audit paths are present; `git diff --check` passed. Final AAPT2 behavior is pending the Android CI run triggered by this change.
+- Next step: Push the change, require the workflow to inspect the real debug APK, then record the result. Real-phone validation still begins with read-only snapshots after explicit Android SDK License acceptance.

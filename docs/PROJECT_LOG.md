@@ -405,3 +405,19 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `docs/PROJECT_LOG.md`
 - Verification: User explicitly accepted this V0 limitation and prioritized a fast end-to-end validation before stronger identity work. Also clarified that only the GrandmaBridge receiving device must run Android; the caller may use any platform supported by WeChat, including iOS.
 - Next step: Select the first physical Android target and record its model, ROM/Android version, and WeChat version.
+
+### 2026-07-20T19:38:07+08:00 - First V0 target model selected
+
+- Category: decision
+- Summary: Selected `HUAWEI Pura 70 Ultra` as the first V0 physical target model.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: User supplied the device model. Huawei's official support material identifies HarmonyOS 4.2 as the launch software and also lists this model on later HarmonyOS upgrade paths, so the installed system version remains a blocking compatibility fact.
+- Next step: Read the phone's exact HarmonyOS version before choosing the Android APK/GKD validation path or a native HarmonyOS alternative.
+
+### 2026-07-20T19:38:52+08:00 - HarmonyOS 4.2 target branch confirmed
+
+- Category: decision
+- Summary: Confirmed that the target HUAWEI Pura 70 Ultra runs HarmonyOS `4.2.0`. V0 will retain the Android APK, AccessibilityService, and GKD feasibility path rather than starting a native HarmonyOS 5+ implementation.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: User read the installed HarmonyOS version from the target phone. The underlying Android API level will still be collected from device properties during preflight instead of inferred from the HarmonyOS label.
+- Next step: Record the installed WeChat version, then connect the phone and capture the first controlled incoming-call UI snapshot.

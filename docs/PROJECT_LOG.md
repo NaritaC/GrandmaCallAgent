@@ -446,3 +446,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Verification: `scripts/v0_self_test.ps1` passed 14-script parsing, offline APK permission checks, snapshot allow/reject cases, exact-contact checks, high-risk rejection, six-case gate completeness, operator/screenshot confirmation, live-action guards, V0.5 guards, and documentation sequence checks. `git diff --check` passed. Local Gradle 8.9 downloaded and started successfully, but Android tasks did not run because this host has no Android SDK path; the user has not explicitly accepted the Android SDK License, so the SDK was not installed.
 - Safety: Removed `INTERNET` from the V0-A APK without affecting WeChat's independent network access; Accessibility events remain XML-scoped and code-scoped to `com.tencent.mm`; V0.5 outbound is disabled at process start and requires an explicit in-App temporary unlock. Added separate guidance for a test phone that also contains online-banking software; a no-banking spare phone remains the recommended target.
 - Next step: Push the changes, obtain a clean Android CI result, then install ADB only after explicit Android SDK License acceptance and begin with the first read-only `Unlocked/Voice` snapshot. No real-phone pass evidence exists yet.
+
+### 2026-07-20T20:50:40+08:00 - V0-A safety gate published and Android CI passed
+
+- Category: verification and push
+- Summary: Published commit `443c0ec Add V0-A snapshot safety gate` to `origin/main`. GitHub Actions run `29743623576` completed successfully for the exact commit.
+- Artifacts: commit `443c0ec`, Android workflow run `29743623576`, `docs/PROJECT_LOG.md`
+- Verification: The workflow validated the Gradle Wrapper, provisioned JDK 17 and Android SDK 35, then passed `:app:testDebugUnitTest`, `:app:lintDebug`, and `:app:assembleDebug`; the debug APK artifact was produced. Local `scripts/v0_self_test.ps1` and `git diff --check` also passed before publication.
+- Next step: Obtain explicit Android SDK License acceptance before installing repository-local ADB, connect the target phone, and capture `Unlocked/Voice` with all automation Accessibility services disabled. Real-phone V0-A remains unverified.

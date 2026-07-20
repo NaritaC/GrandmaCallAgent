@@ -1,8 +1,8 @@
 # 本地运行方式
 
-## V0 本地自动化
+## V0-A 本地自动接听
 
-V0 不需要启动云端服务。先在仓库根目录运行离线脚本自测：
+V0-A 不启动云端服务，APK 也不声明 `INTERNET` 权限。先在仓库根目录运行离线脚本自测：
 
 ```powershell
 .\scripts\v0_self_test.ps1
@@ -25,12 +25,19 @@ cd GrandmaBridge
 
 Wrapper 会校验 Gradle 8.9 发行包的 SHA-256。CI 通过不代表微信 UI 自动化已通过真机验收。
 
-然后用 Android Studio 打开 `GrandmaBridge/`，同步 Gradle 并安装到备用手机或测试手机。在 App 中：
+在安装和启用 GrandmaBridge 前，先保持所有自动化无障碍服务关闭，按 [V0 手机验证指南](V0_PHONE_VALIDATION.md) 采集六组只读来电快照并生成门禁：
 
-1. 保存本地微信显示名白名单。
+```powershell
+.\scripts\v0_capture_call_snapshot.ps1 -ExpectedContactRemark V0TEST01 -CallType Voice -ScreenState Unlocked -AcceptPrivateDataCapture -ConfirmAutomationDisabled -ConfirmTargetDeviceMatrix
+.\scripts\v0_check_snapshot_gate.ps1 -ConfirmScreenshotsReviewed -OutputPath artifacts/v0-call-snapshots/v0-a-gate.json
+```
+
+第一条命令需分别覆盖语音/视频和三种屏幕状态，不能只运行示例一次。门禁通过后，用 Android Studio 打开 `GrandmaBridge/`，同步 Gradle 并安装到备用手机或测试手机。在 App 中：
+
+1. 保存家属维护的唯一微信备注白名单，例如 `V0TEST01`。
 2. 手动启用 `GrandmaBridge` 无障碍服务和通知使用权。
 3. 保持自动接听开关关闭，先完成权限和负向场景检查。
-4. 测试时再打开自动接听开关，并按 [V0 手机验证指南](V0_PHONE_VALIDATION.md) 逐场景验证。
+4. 负向测试通过后再打开自动接听开关，并按指南验证六种来电状态。
 
 具备 JDK 17 或更高版本、Android SDK 35 和 ADB 时也可使用：
 
@@ -58,7 +65,7 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -e ".[dev]"
 Copy-Item storage\whitelist.example.json storage\whitelist.json
-uvicorn grandma_agent_server.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn grandma_agent_server.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
 服务启动后检查：

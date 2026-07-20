@@ -8,7 +8,7 @@ This repository is a two-part monorepo for a senior-friendly Android call agent.
 - `GrandmaAgentServer/`: Python FastAPI server. Package code is in `grandma_agent_server/`; tests are in `tests/`; example runtime data is in `storage/`.
 - `docs/`: architecture, permissions, local run steps, test checklist, and reference project research.
 
-Keep V0 behavior scoped to local automation validation: WeChat voice/video call detection, local whitelist checks, auto-answer, one-tap outbound calls, and local logs. Agent servers, tool APIs, and device heartbeat belong to V1.
+Keep V0-A scoped to fixed-device local incoming-call validation: WeChat voice/video detection, exact local whitelist checks, auto-answer, and local logs. Multi-screen one-tap outbound calls belong to V0.5; Agent servers, tool APIs, and device heartbeat belong to V1.
 
 ## Build, Test, and Development Commands
 

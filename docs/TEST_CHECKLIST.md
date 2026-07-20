@@ -1,70 +1,67 @@
 # 测试清单
 
-## V1 服务端单元测试（预留）
+## V0-A 离线与构建
 
-- [ ] 白名单联系人允许 `accept_call`。
-- [ ] 非白名单联系人拒绝 `accept_call`。
-- [ ] 非微信包名拒绝。
-- [ ] 非 `voice`/`video` 通话类型拒绝。
-- [ ] `payment`、`transfer`、`delete_message` 等高风险动作拒绝。
-- [ ] payload 中出现“支付/转账/红包/删除”等关键词时拒绝。
-- [ ] 任务日志能记录允许、拒绝和执行结果。
+- [x] `scripts/v0_self_test.ps1` 覆盖脚本语法、ADB 设备选择、快照分析、六场景门禁和场景拒绝路径。
+- [x] Android 单元测试覆盖 `SafetyGate`、来电解析和拨出页面策略。
+- [x] GitHub Actions run `29695704802` 使用 JDK 17、Android SDK 35 和 Gradle 8.9 通过单元测试、Lint 和 debug 构建。
+- [ ] 本地或 CI 生成的可信 debug APK 已安装到目标手机。
 
-## V1 Android 联网测试（预留）
+## V0-A 目标与快照门禁
 
-- [ ] App 能保存 WebSocket 地址。
-- [ ] App 能打开无障碍服务设置页。
-- [ ] App 能打开通知使用权设置页。
-- [ ] 启动后能向服务端发送 `heartbeat`。
-- [ ] 通知监听能识别微信语音来电通知。
-- [ ] 通知监听能识别微信视频来电通知。
-- [ ] 无障碍服务能识别微信来电窗口。
-- [ ] 收到云端 `accept_call` 命令后，当前窗口是白名单联系人来电时能点击接听。
-- [ ] 当前窗口不是微信时不点击。
-- [ ] 当前窗口包含支付/转账/删除等关键词时不点击。
+- [ ] 人工确认 `HUAWEI Pura 70 Ultra / HarmonyOS 4.2.0 / WeChat 8.0.76`。
+- [ ] 测试联系人使用唯一合成微信备注，如 `V0TEST01`；未记录真实昵称或微信号。
+- [ ] 快照采集时 GrandmaBridge、GKD 和其它自动化 Accessibility 服务均关闭。
+- [ ] 未锁屏语音和视频快照通过。
+- [ ] 锁屏亮屏语音和视频快照通过。
+- [ ] 锁屏熄屏语音和视频快照通过。
+- [ ] 六张截图已人工核对联系人、通话类型和页面状态。
+- [ ] `scripts/v0_check_snapshot_gate.ps1 -ConfirmScreenshotsReviewed` 输出 `complete: True`、`valid: 6/6`。
+- [ ] 快照和 UI XML 只保存在已忽略的本地目录，未上传 GitHub。
 
-## V0 本地自动化验证
+## V0-A 负向实测
 
-- [ ] App 能保存本地白名单。
 - [ ] 自动接听总开关默认关闭。
-- [x] `scripts/v0_self_test.ps1` 通过，确认脚本语法、ADB 设备选择和全部场景计划可执行。
-- [x] Android 单元测试通过，覆盖 `SafetyGate`、来电解析和拨出页面策略（GitHub Actions run `29695704802`）。
-- [x] CI 校验 Gradle Wrapper，并使用 JDK 17、Android SDK 35 和 Gradle 8.9 成功执行 Lint 与 debug APK 构建，上传测试、Lint、构建日志和未签名 APK（GitHub Actions run `29695704802`）。
-- [ ] 自动接听总开关关闭时，白名单来电也不会自动接听，并记录 `auto_answer_disabled`。
-- [ ] 主机没有 ADB 时，已阅读并接受 Android SDK License 后运行 `scripts/v0_setup_platform_tools.ps1 -AcceptAndroidSdkLicense`，或通过 Android Studio SDK Manager 安装 Platform-Tools。
-- [ ] 如使用命令行安装，`scripts/v0_host_preflight.ps1 -AssertReady` 通过，确认 JDK 17+、ADB 和仓库 Gradle Wrapper 就绪。
-- [ ] `scripts/v0_build_install.ps1` 能构建、安装并启动 App，或使用 `-ApkPath` 安装本仓库 CI/Android Studio 生成的可信 APK。
-- [ ] `scripts/v0_device_preflight.ps1 -AssertReady` 通过，确认 App、微信、无障碍服务和通知监听权限均就绪。
-- [ ] App 能显示和清空本地日志。
-- [ ] 白名单联系人微信语音来电能自动接听，并记录 `accept_success`。
-- [ ] 白名单联系人微信视频来电能自动接听，并记录 `callType=video`。
-- [ ] 非白名单联系人来电不会自动接听，并记录拒绝原因。
-- [ ] 一键拨出只允许白名单联系人。
-- [ ] 相似但不完全一致的联系人显示名不会通过精确联系人校验。
-- [ ] 微信不在主标签页时，一键拨出记录 `wechat_home_not_confirmed`，且不输入文字、不点击联系人或通话按钮。
-- [ ] 一键拨出启动后，App 内“停止一键拨出”能取消 pending outbound 并记录 `outbound_cancelled`。
-- [ ] 一键拨出期间收到微信来电会先取消待拨任务，通话结束后不会恢复旧任务。
-- [ ] 一键拨出错误页面时能停止并记录失败原因。
-- [ ] `HighRiskPage` 在普通测试聊天显示“转账”文本时触发 `local_reject_high_risk_keyword`，且搜索、输入、联系人及通话点击日志全部不存在；不要进入真实资金或删除页面测试。
-- [ ] 非通话页面即使出现“接受”按钮，也不会被当成微信来电接听页。
-- [ ] 使用 `scripts/v0_assert_log.ps1` 对关键场景执行必需/禁止日志关键字断言。
-- [ ] 使用 `scripts/v0_run_scenario.ps1` 跑至少 `AutoAnswerOff`、`WhitelistVoice`、`WhitelistVideo`、`NonWhitelist`、`NonCallAccept`、`OutboundCancel` 六个场景。
-- [ ] 使用 `scripts/v0_run_scenario.ps1 -Scenario OutboundWrongPage` 验证错误页面负向边界。
-- [ ] 多设备连接时，未传 `-Serial` 会失败；传入目标序列号后只操作指定手机。
-- [ ] 使用 `scripts/v0_collect_evidence.ps1` 采集验证证据包，确认权限状态、微信版本和 V0 日志可追溯。
+- [ ] 总开关关闭时，白名单来电不接听并记录 `auto_answer_disabled`。
+- [ ] 非白名单来电不接听并记录 `contact_not_in_local_whitelist`。
+- [ ] 相似但不完全一致的备注不通过白名单。
+- [ ] 非通话页面即使出现“接受/同意”也不点击。
+- [ ] 非微信包名、未知通话类型、联系人不可见或页面歧义时默认拒绝。
+- [ ] 普通测试页面出现“转账”等风险词时本地 `SafetyGate` 拒绝；不进入真实资金页面测试。
 
-## V1 端到端测试（预留）
+## V0-A 白名单实测
 
-- [ ] 白名单联系人微信语音来电：自动接听，服务端记录 `command_sent` 和 `action_result`。
-- [ ] 白名单联系人微信视频来电：自动接听，服务端记录成功。
-- [ ] 非白名单联系人来电：不接听，服务端记录 `blocked`。
-- [ ] 断网后恢复：WebSocket 自动重连，心跳恢复。
-- [ ] 服务端重启后：Android 端自动重连。
+- [ ] 未锁屏语音来电自动接听并记录 `accept_success`。
+- [ ] 未锁屏视频来电自动接听并记录 `callType=video`、`accept_success`。
+- [ ] 锁屏亮屏语音和视频均自动接听。
+- [ ] 锁屏熄屏语音和视频均自动接听。
+- [ ] 每个场景都通过 `v0_run_scenario.ps1` 的必需/禁止日志断言。
+- [ ] 多设备连接时未传 `-Serial` 会失败；指定序列号后只操作目标手机。
+- [ ] 证据能追溯 commit、设备矩阵、屏幕状态和结果，但不包含私密联系人信息。
 
-## 回归边界
+## V0.5 一键拨出
 
-- [ ] 微信支付页不会被点击。
-- [ ] 微信红包页不会被点击。
-- [ ] 聊天消息删除弹窗不会被点击。
-- [ ] 普通聊天通知不会触发接听。
-- [ ] 系统电话来电不会触发微信接听工具。
+- [ ] 仅在 V0-A 通过后开始，并显式传入 `-AcceptExperimentalOutbound`。
+- [ ] App 启动时 V0.5 外呼默认锁定；未勾选临时解锁时运行时记录 `experimental_outbound_disabled` 并拒绝。
+- [ ] 只允许用户主动触发和本地白名单联系人。
+- [ ] `OutboundWrongPage` 不输入、不点击。
+- [ ] `HighRiskPage` 在无风险测试页面触发拒绝，且无搜索、输入、联系人或通话点击日志。
+- [ ] `OutboundCancel` 能停止待拨任务。
+- [ ] 一键拨出期间收到来电会取消待拨任务，之后不会恢复。
+- [ ] `OutboundVoice` 和 `OutboundVideo` 只在逐页精确确认后执行。
+
+## V1 服务端与联网（预留）
+
+- [ ] 白名单、工具注册、任务日志和云端 `SafetyGate` 单元测试通过。
+- [ ] 未注册工具、非通话工具和高风险 payload 默认拒绝。
+- [ ] Bridge 只接受窄类型通话命令，不暴露通用点击或输入。
+- [ ] 手机本地 `SafetyGate` 可否决任何云端允许结果。
+- [ ] WebSocket 断线重连和设备心跳恢复。
+- [ ] 心跳不包含聊天内容、联系人原文或凭据。
+
+## 永久回归边界
+
+- [ ] 微信支付、红包、转账、银行卡和验证码页面不会被点击。
+- [ ] 消息发送、好友管理、聊天抓取和删除能力不存在。
+- [ ] 普通聊天通知和系统电话不会触发微信接听。
+- [ ] 微信、HarmonyOS 或设备版本变化后旧快照门禁不再复用。

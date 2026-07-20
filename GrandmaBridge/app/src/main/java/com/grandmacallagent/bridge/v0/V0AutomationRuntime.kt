@@ -6,6 +6,8 @@ import com.grandmacallagent.bridge.speech.TtsSpeaker
 
 object V0AutomationRuntime {
     private val allowedCallTypes = setOf("voice", "video")
+    @Volatile
+    private var experimentalOutboundEnabled = false
 
     fun start(context: Context) {
         TtsSpeaker.start(context.applicationContext)
@@ -55,6 +57,12 @@ object V0AutomationRuntime {
     }
 
     fun startOutboundCall(context: Context, contactName: String, callType: String): Boolean {
+        if (!experimentalOutboundEnabled) {
+            LocalActionLogger.append(context, "outbound_rejected", "reason=experimental_outbound_disabled")
+            TtsSpeaker.speak("实验性一键拨出未启用。")
+            return false
+        }
+
         val normalizedName = contactName.trim()
         val normalizedCallType = callType.trim().lowercase()
         if (normalizedName.isBlank()) {
@@ -86,5 +94,17 @@ object V0AutomationRuntime {
             context = context,
             reason = "user_requested",
         )
+    }
+
+    fun setExperimentalOutboundEnabled(context: Context, enabled: Boolean) {
+        val shouldCancelPending = experimentalOutboundEnabled && !enabled
+        experimentalOutboundEnabled = enabled
+        LocalActionLogger.append(context, "settings", "experimental_outbound_enabled=$enabled")
+        if (shouldCancelPending) {
+            GrandmaAccessibilityService.cancelPendingOutbound(
+                context = context,
+                reason = "experimental_outbound_disabled",
+            )
+        }
     }
 }

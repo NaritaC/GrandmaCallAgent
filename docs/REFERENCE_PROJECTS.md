@@ -1,6 +1,6 @@
 # 可参考项目调研
 
-调研日期：2026-07-09
+首次调研：2026-07-09；路线复核：2026-07-20
 
 调研目标：在 GitHub 上查找与 GrandmaCallAgent 相近的开源项目，重点关注 Android 无障碍自动化、微信自动化、通话自动接听、手机 Agent、WebSocket 设备桥和 Android Agent 评测框架。
 
@@ -28,6 +28,7 @@
 
 | 项目 | 类型 | 主要功能 | 可复用评分 | 可复用点 | 风险/限制 |
 | --- | --- | --- | --- | --- | --- |
+| [gkd-kit/gkd](https://github.com/gkd-kit/gkd) | Android 无障碍规则与快照工具 | Kotlin Android App，提供 UI 快照、选择器、本地订阅和受作用域约束的自动点击规则。 | 5 星 | 可直接作为 V0 独立校准工具：先抓真实微信来电快照，再验证联系人、通话类型和接听节点的组合规则；无需先把猜测写进 GrandmaBridge。 | GPL-3.0，README 另有非商业使用说明；不直接复制或打包源码。规则仍有误触风险，必须限定 App/版本/Activity、单次动作和排除条件。 |
 | [369219053/wechat-auto-apk](https://github.com/369219053/wechat-auto-apk) | 微信无障碍自动化 | 基于 Android 原生 AccessibilityService 的微信私域自动化，包含通讯录同步、好友搜索、批量文字消息、前台服务、权限管理、通知和本地存储。 | 4 星 | 近期 Android 原生无障碍工程结构、微信 UI resource-id/content-desc 定位、任务队列、前台服务、权限引导。 | 业务目标包含私信/营销，和本项目安全边界冲突；不能复用发送消息、通讯录采集等行为，只能借鉴底层 UI 定位和服务保活模式。 |
 | [coder-pig/WechatHelper](https://github.com/coder-pig/WechatHelper) | 微信无障碍自动化 | Kotlin 编写，使用 AccessibilityService 自动执行微信加好友、拉群、朋友圈点赞等重复操作。 | 3 星 | Kotlin + AccessibilityService 项目结构、节点遍历、点击动作封装、微信页面状态判断。 | 已较旧，只保证作者设备可用；动作类型多为本项目禁止的社交/营销动作。 |
 | [Liar1995/AccessibilityDemo](https://github.com/Liar1995/AccessibilityDemo) | 微信自动回复示例 | Android 微信自动回复消息示例。 | 2 星 | 可参考通知/窗口事件触发后的微信页面识别与输入控件定位。 | 自动回复属于本项目禁止动作；项目较小且较旧，只适合作为无障碍入门参考。 |
@@ -49,10 +50,11 @@
 
 ### 第一阶段可借鉴
 
-1. 从 `369219053/wechat-auto-apk` 和 `coder-pig/WechatHelper` 学习微信 UI 节点定位、窗口状态判断、前台服务和权限引导，但只保留通话接听相关模式。
-2. 用 `openatx/uiautomator2` 或 `appium/appium-uiautomator2-server` 做真机调试和回归测试，记录不同微信版本下的接听按钮文本、content-desc、resource-id 和窗口层级。
-3. 借鉴系统电话自动接听项目的“事件 -> 安全判断 -> 执行动作 -> 结果通知”状态机，不复用旧电话 API。
-4. 借鉴 `ccpocket` 的 WebSocket bridge、断线恢复和审批流设计，但 GrandmaCallAgent 的动作空间必须更窄。
+1. 优先用 GKD 或本仓库只读 ADB 脚本采集真实快照，再决定选择器；GKD 只作独立校准，不作为运行时依赖。
+2. 从 `369219053/wechat-auto-apk` 和 `coder-pig/WechatHelper` 学习微信 UI 节点定位、窗口状态判断、前台服务和权限引导，但只保留通话接听相关模式。
+3. 用 `openatx/uiautomator2` 或 `appium/appium-uiautomator2-server` 做真机调试和回归测试，记录不同微信版本下的接听按钮文本、content-desc、resource-id 和窗口层级。
+4. 借鉴系统电话自动接听项目的“事件 -> 安全判断 -> 执行动作 -> 结果通知”状态机，不复用旧电话 API。
+5. 借鉴 `ccpocket` 的 WebSocket bridge、断线恢复和审批流设计，但 GrandmaCallAgent 的动作空间必须更窄。
 
 ### 明确不应复用
 
@@ -65,6 +67,7 @@
 
 | 优先级 | 项目 | 用途 |
 | --- | --- | --- |
+| P0 | `gkd-kit/gkd` | 固定版本微信来电快照、选择器和单动作可行性校准 |
 | P0 | `369219053/wechat-auto-apk`、`coder-pig/WechatHelper` | Android 原生 AccessibilityService 和微信 UI 定位参考 |
 | P0 | `openatx/uiautomator2` | 真机节点分析和自动化回归测试 |
 | P1 | `K9i-0/ccpocket` | WebSocket bridge、重连和远程审批体验参考 |

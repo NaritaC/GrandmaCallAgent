@@ -26,6 +26,7 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         V0AutomationRuntime.start(applicationContext)
+        V0AutomationRuntime.setExperimentalOutboundEnabled(applicationContext, false)
         setContentView(buildContent())
     }
 
@@ -49,7 +50,7 @@ class MainActivity : Activity() {
             textSize = 24f
         }
         val description = TextView(this).apply {
-            text = "V0：本地自动化脚本验证。只处理微信通话白名单接听和用户主动触发的一键拨出。"
+            text = "V0-A：固定环境白名单来电自动接听验证。"
             textSize = 15f
         }
         autoAnswerCheckBox = CheckBox(this).apply {
@@ -66,7 +67,7 @@ class MainActivity : Activity() {
             }
         }
         whitelistInput = EditText(this).apply {
-            hint = "白名单联系人，每行一个微信显示名"
+            hint = "唯一微信备注，每行一个（例如 V0TEST01）"
             minLines = 3
             setText(LocalWhitelistStore.displayText(this@MainActivity))
         }
@@ -79,16 +80,34 @@ class MainActivity : Activity() {
             }
         }
         outboundInput = EditText(this).apply {
-            hint = "一键拨出联系人，必须在白名单内"
+            hint = "V0.5 联系人，必须在白名单内"
             setSingleLine(true)
+            isEnabled = false
         }
         val voiceButton = Button(this).apply {
             text = "一键拨出微信语音"
+            isEnabled = false
             setOnClickListener { startOutbound("voice") }
         }
         val videoButton = Button(this).apply {
             text = "一键拨出微信视频"
+            isEnabled = false
             setOnClickListener { startOutbound("video") }
+        }
+        val experimentalOutboundCheckBox = CheckBox(this).apply {
+            text = "启用 V0.5 实验性一键拨出（仅监督测试）"
+            isChecked = false
+            setOnCheckedChangeListener { _, checked ->
+                V0AutomationRuntime.setExperimentalOutboundEnabled(this@MainActivity, checked)
+                outboundInput.isEnabled = checked
+                voiceButton.isEnabled = checked
+                videoButton.isEnabled = checked
+                Toast.makeText(
+                    this@MainActivity,
+                    if (checked) "V0.5 一键拨出已临时解锁" else "V0.5 一键拨出已关闭",
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
         }
         val cancelOutboundButton = Button(this).apply {
             text = "停止一键拨出"
@@ -132,6 +151,7 @@ class MainActivity : Activity() {
             autoAnswerCheckBox,
             whitelistInput,
             saveWhitelistButton,
+            experimentalOutboundCheckBox,
             outboundInput,
             voiceButton,
             videoButton,

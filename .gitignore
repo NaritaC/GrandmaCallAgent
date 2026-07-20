@@ -16,4 +16,5 @@ GrandmaAgentServer/storage/*.jsonl
 GrandmaAgentServer/storage/whitelist.json
 
 artifacts/v0-evidence/
+artifacts/v0-call-snapshots/
 .tools/

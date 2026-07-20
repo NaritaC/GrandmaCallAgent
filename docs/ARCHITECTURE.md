@@ -1,138 +1,83 @@
 # 架构说明
 
-> 阶段说明：当前产品实现重点是 `V0: 本地自动化脚本验证`。V0 不涉及 Agent 能力，只验证手机本地脚本/无障碍原型能否完成微信来电识别、白名单判断、自动接听、一键拨出和本地日志。本文中的云端 `GrandmaAgentServer`、WebSocket 工具调用和设备状态上报描述的是已搭建的 V1 骨架。
+当前交付重点是 V0-A：在固定手机、系统和微信版本上验证本地白名单自动接听。V0-A 不依赖 Agent、云端或网络；一键拨出属于 V0.5。
 
-## 目标
-
-V0 目标是证明手机本地自动化可行：微信语音/视频来电识别、白名单本地判断、自动接听、一键拨出和本地日志。系统不执行任何支付、转账、删除消息、发消息等非通话动作。云端连接、设备心跳和 Agent 工具调用属于 V1。
-
-## V0 本地验证组件
+## V0-A 快照门禁
 
 ```mermaid
 flowchart TB
-  subgraph Phone[Android Phone]
-    N[Notification listener or local script trigger]
-    A[AccessibilityService / automation script]
-    WL[Local whitelist]
-    SG[Local safety check]
-    LOG[Local log]
-    T[TextToSpeech optional prompt]
-  end
-
-  WeChat[WeChat voice/video call UI] --> N
-  WeChat --> A
-  N --> WL
-  A --> SG
-  WL --> SG
-  SG -->|allowed| A
-  A -->|click accept / one-tap outbound| WeChat
-  SG --> LOG
-  A --> LOG
-  A --> T
+  T[测试微信来电] --> C[ADB 只读截图与 UI XML]
+  C --> A[结构化快照分析]
+  A --> M{六种状态均通过?}
+  M -->|否| X[保持所有自动化关闭]
+  M -->|是| R[测试人复核六张截图]
+  R --> G[生成固定目标门禁]
 ```
 
-## V1 骨架组件
+六种状态是语音/视频与未锁屏、锁屏亮屏、锁屏熄屏的组合。门禁绑定 `HUAWEI Pura 70 Ultra / HarmonyOS 4.2.0 / WeChat 8.0.76`，任一版本变化后失效。
+
+## V0-A 手机运行时
 
 ```mermaid
-flowchart TB
-  subgraph Phone[Android GrandmaBridge]
-    N[NotificationListenerService]
-    A[AccessibilityService]
-    W[WebSocket Client]
-    T[TextToSpeech]
-    L[Local Safety Check]
-  end
-
-  subgraph Cloud[GrandmaAgentServer]
-    WS[FastAPI WebSocket]
-    CM[DeviceConnectionManager]
-    TR[ToolRegistry]
-    SG[SafetyGate]
-    WL[WhitelistStore]
-    LOG[TaskLogger]
-  end
-
-  WeChat[WeChat incoming voice/video call] --> N
-  WeChat --> A
-  N --> W
-  A --> W
-  W <--> WS
-  WS --> CM
-  CM --> TR
-  TR --> SG
-  SG --> WL
-  SG --> LOG
-  CM -->|accept_call command| W
-  W --> A
+flowchart LR
+  N[WeChat notification] --> P[Local call parser]
+  U[WeChat call window] --> P
+  P --> W[Exact local whitelist]
+  W --> S[Local SafetyGate]
+  S -->|allow accept only| A[Accessibility click]
+  S -->|reject| L[Local action log]
   A --> L
-  L -->|click accept only| WeChat
-  A --> T
+  L --> T[Optional TTS]
 ```
 
-## V0 通话接听验证流程
+执行链必须同时确认：
 
-1. 微信来电出现通知或来电窗口。
-2. 本地通知监听、无障碍服务或自动化脚本识别微信语音/视频来电。
-3. 本地读取白名单并判断联系人是否允许。
-4. 本地安全检查当前窗口必须是微信来电页，并且没有支付、转账、红包、删除等高风险关键词。
-5. 本地校验通过后只精确匹配并点击“接听/接受/Answer/Accept”等接听按钮，不使用包含匹配。
-6. 本地日志记录识别结果、白名单判断、安全检查和点击结果。
+1. 事件和活动窗口属于 `com.tencent.mm`。
+2. 通话类型是语音或视频。
+3. 来电页显示的唯一备注精确命中本地白名单。
+4. 页面有明确通话和接听信号，接听节点启用且可点击。
+5. 页面不含支付、转账、红包、银行卡、验证码或删除等风险词。
 
-## V1 通话接听流程（骨架）
+任何信号缺失都默认拒绝。V0-A Manifest 不含 `INTERNET` 权限，日志和白名单只保存在本地。
 
-1. 微信来电出现通知或来电窗口。
-2. `WeChatNotificationListener` 或 `GrandmaAccessibilityService` 识别为微信语音/视频来电。
-3. `BridgeWebSocketClient` 将 `incoming_wechat_call` 事件发送到云端。
-4. 云端 `DeviceConnectionManager` 调用 `ToolRegistry` 中的 `accept_wechat_call`。
-5. `SafetyGate` 检查应用包名、通话类型、白名单联系人和高风险关键词。
-6. 允许时，云端通过 WebSocket 下发 `accept_call` 命令。
-7. Android 无障碍服务再次检查当前窗口必须是微信来电页，并且没有支付/转账/删除等高风险关键词。
-8. 本地校验通过后只点击“接听/接受/Answer/Accept”等接听按钮。
-9. Android 上报 `action_result`，云端写入任务日志。
+## V0.5 一键拨出
 
-## V1 心跳流程（骨架）
+V0.5 复用本地白名单和 `SafetyGate`，但使用独立的有限状态机：微信首页确认、搜索入口、精确联系人、目标聊天页、语音/视频入口。它不提供通用坐标、任意选择器或任意文本输入；用户取消、超时、页面歧义、风险词和来电都会终止任务。
 
-1. Android 端每 30 秒发送一次 `heartbeat`。
-2. 心跳包含设备型号、系统版本、电量、无障碍服务状态、通知监听状态。
-3. 云端记录设备在线状态，可通过 `/devices` 查询。
+## V1 受控 Agent 架构
 
-## 安全设计
-
-- V0 只使用本地白名单、本地安全检查和本地日志，不依赖 Agent 决策；应用禁止明文网络流量。
-- V0 只允许微信通话接听和用户主动触发的一键拨出。
-- V1 才引入云端或本地 Agent Server 的工具调用和 `SafetyGate` 服务化。
-- 默认拒绝未知动作、未知包名、未知通话类型和非白名单联系人。
-- 日志必须记录允许、拒绝和执行结果。
-
-## V1 WebSocket 消息示例
-
-设备上报来电：
-
-```json
-{
-  "type": "incoming_wechat_call",
-  "device_id": "android-id",
-  "timestamp": 1720000000000,
-  "payload": {
-    "app_package": "com.tencent.mm",
-    "contact_name": "妈妈",
-    "call_type": "voice",
-    "source": "notification"
-  }
-}
+```mermaid
+flowchart TB
+  subgraph Phone[GrandmaBridge]
+    D[Deterministic call detector]
+    API[Typed call tools]
+    LS[Local SafetyGate]
+    HB[Status heartbeat]
+  end
+  subgraph Server[GrandmaAgentServer]
+    WS[Authenticated WebSocket]
+    TR[Restricted ToolRegistry]
+    CS[Cloud SafetyGate]
+    CFG[Whitelist and config]
+    AUDIT[Task audit]
+  end
+  D --> LS
+  LS -->|local auto-answer| WeChat[WeChat call UI]
+  HB --> WS
+  WS --> TR
+  TR --> CS
+  CS --> API
+  API --> LS
+  LS -->|final allow| WeChat
+  CS --> AUDIT
+  CFG --> CS
 ```
 
-云端下发命令：
+实时自动接听不经过 LLM。Agent 只能请求明确的通话工具，不能调用通用点击、输入、消息或支付动作。云端允许结果仍需通过手机本地 `SafetyGate`，本地拒绝不可被覆盖。
 
-```json
-{
-  "command_id": "uuid",
-  "type": "accept_call",
-  "task_id": "uuid",
-  "payload": {
-    "app_package": "com.tencent.mm",
-    "contact_name": "妈妈",
-    "call_type": "voice"
-  }
-}
-```
+## V1 消息原则
+
+- 心跳只含设备型号、系统版本、电量和服务授权状态。
+- 工具 payload 只含设备、白名单联系人引用和 `voice`/`video` 类型。
+- 不上传聊天内容、通知原文、屏幕截图、音视频或通讯录。
+- 每个请求和本地执行结果都有命令 ID、时间戳和拒绝原因。

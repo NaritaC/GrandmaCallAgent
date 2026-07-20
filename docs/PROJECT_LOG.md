@@ -478,3 +478,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: commit `60decce`, Android workflow run `29744349860`, `docs/TEST_CHECKLIST.md`, `docs/V0_PHONE_VALIDATION.md`, `docs/PROJECT_LOG.md`
 - Verification: Gradle Wrapper validation, JDK 17/Android SDK 35 setup, Android unit tests, Lint, debug APK build, AAPT2 packaged-permission inspection, compiled Accessibility XML inspection, and artifact upload all passed. The final APK had zero `uses-permission` entries and exactly one Accessibility `packageNames` attribute containing `com.tencent.mm`.
 - Next step: Install repository-local Platform-Tools only after explicit Android SDK License acceptance, connect the fixed target phone, and collect the first supervised `Unlocked/Voice` read-only snapshot. No real-phone V0-A evidence exists yet.
+
+### 2026-07-20T21:04:08+08:00 - Real-phone validation blocked pending license acceptance and device connection
+
+- Category: blocker
+- Summary: Repository-side V0-A implementation, offline tests, Android CI, packaged APK safety inspection, phone scripts, and validation guidance are ready. Real-phone work cannot begin because Android Platform-Tools has not been installed, the user has not explicitly accepted the Android SDK License, and no authorized target phone is available through ADB.
+- Artifacts: `docs/PROJECT_LOG.md`, `scripts/v0_host_preflight.ps1`, `scripts/v0_setup_platform_tools.ps1`, `docs/V0_PHONE_VALIDATION.md`
+- Verification: A fresh `scripts/v0_host_preflight.ps1` run found Java 21 and the Gradle Wrapper but reported `adb: missing`; `.tools/android-sdk/platform-tools/adb.exe` does not exist. This is the same blocking condition reported across three consecutive goal turns. The Git worktree was clean before this log entry.
+- Next step: User explicitly replies `我已阅读并接受 Android SDK License`, then repository-local Platform-Tools can be installed. Connect and authorize the `HUAWEI Pura 70 Ultra`, keep all automation Accessibility services disabled, and capture the first `Unlocked/Voice` snapshot.

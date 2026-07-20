@@ -421,3 +421,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `docs/PROJECT_LOG.md`
 - Verification: User read the installed HarmonyOS version from the target phone. The underlying Android API level will still be collected from device properties during preflight instead of inferred from the HarmonyOS label.
 - Next step: Record the installed WeChat version, then connect the phone and capture the first controlled incoming-call UI snapshot.
+
+### 2026-07-20T19:41:00+08:00 - V0-A target matrix completed
+
+- Category: decision
+- Summary: Fixed the first feasibility matrix as `HUAWEI Pura 70 Ultra / HarmonyOS 4.2.0 / WeChat 8.0.76`.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: User read the installed WeChat version from the target phone. No claim will be generalized to other phone, ROM, or WeChat versions until separately validated.
+- Next step: Confirm whether locked and screen-off incoming calls are part of the V0-A pass gate, then capture the initial unlocked incoming-call snapshot.

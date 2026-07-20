@@ -389,3 +389,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `scripts/v0_setup_platform_tools.ps1`, `scripts/v0_common.ps1`, `scripts/v0_host_preflight.ps1`, `.gitignore`, `README.md`, `docs/LOCAL_RUN.md`, `docs/V0_PHONE_VALIDATION.md`, `docs/TEST_CHECKLIST.md`, `docs/PROJECT_LOG.md`
 - Verification: Google repository metadata identified stable Windows package `platform-tools_r37.0.0-win.zip` with checksum `f29bfb58d0d6f9a57d7dbcba6cc259f9ca6f58f1`. All 11 V0 scripts parsed, and the setup script correctly refused to install without `-AcceptAndroidSdkLicense`. Installation was not performed because the user has not explicitly accepted the third-party license.
 - Next step: Obtain explicit license acceptance and installation authorization, then run ADB version/device checks and continue phone preflight.
+
+### 2026-07-20T17:22:53+08:00 - V0 feasibility-gate scope confirmed
+
+- Category: decision
+- Summary: Confirmed that V0 is a feasibility gate for one fixed phone, Android version, and WeChat version. The first validation path will use UI snapshots and a GKD local rule before hardening the behavior in GrandmaBridge; multi-screen one-tap outbound calling moves to V0.5.
+- Artifacts: `docs/PROJECT_LOG.md`
+- Verification: User explicitly confirmed the scope decision during the roadmap review. No runtime or roadmap implementation has been changed yet.
+- Next step: Identify the exact target device matrix and define measurable pass/fail criteria for the V0 gate.

@@ -470,3 +470,11 @@ This document records durable discussion decisions and project progress. Use ISO
 - Artifacts: `scripts/v0_verify_apk_safety.ps1`, `.github/workflows/android-v0.yml`, `scripts/v0_self_test.ps1`, `docs/PERMISSIONS.md`, `docs/TEST_CHECKLIST.md`, `docs/PROJECT_LOG.md`
 - Verification: `scripts/v0_self_test.ps1` passed parsing for all 15 V0 scripts and confirmed both packaged-APK audit paths are present; `git diff --check` passed. Final AAPT2 behavior is pending the Android CI run triggered by this change.
 - Next step: Push the change, require the workflow to inspect the real debug APK, then record the result. Real-phone validation still begins with read-only snapshots after explicit Android SDK License acceptance.
+
+### 2026-07-20T21:02:07+08:00 - Packaged V0-A APK safety audit passed
+
+- Category: verification and push
+- Summary: Published commit `60decce Verify V0 APK safety boundaries`; GitHub Actions run `29744349860` completed successfully and produced the audited `GrandmaBridge-debug` artifact.
+- Artifacts: commit `60decce`, Android workflow run `29744349860`, `docs/TEST_CHECKLIST.md`, `docs/V0_PHONE_VALIDATION.md`, `docs/PROJECT_LOG.md`
+- Verification: Gradle Wrapper validation, JDK 17/Android SDK 35 setup, Android unit tests, Lint, debug APK build, AAPT2 packaged-permission inspection, compiled Accessibility XML inspection, and artifact upload all passed. The final APK had zero `uses-permission` entries and exactly one Accessibility `packageNames` attribute containing `com.tencent.mm`.
+- Next step: Install repository-local Platform-Tools only after explicit Android SDK License acceptance, connect the fixed target phone, and collect the first supervised `Unlocked/Voice` read-only snapshot. No real-phone V0-A evidence exists yet.

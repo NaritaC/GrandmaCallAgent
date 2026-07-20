@@ -99,7 +99,7 @@ $gatePath = "artifacts/v0-call-snapshots/v0-a-gate.json"
 
 ## 3. 安装和配置 GrandmaBridge
 
-提交 `443c0ec` 已在 [GitHub Actions run 29743623576](https://github.com/NaritaC/GrandmaCallAgent/actions/runs/29743623576) 通过单元测试、Lint 和 debug APK 构建。可以从该 run 下载 `GrandmaBridge-debug` artifact，解压后用仓库 ADB 安装，无需在本机安装完整 Android SDK 35：
+提交 `60decce` 已在 [GitHub Actions run 29744349860](https://github.com/NaritaC/GrandmaCallAgent/actions/runs/29744349860) 通过单元测试、Lint、debug APK 构建和最终 APK 权限/无障碍作用域审计。可以从该 run 下载 `GrandmaBridge-debug` artifact，解压后用仓库 ADB 安装，无需在本机安装完整 Android SDK 35：
 
 ```powershell
 .\scripts\v0_build_install.ps1 -ApkPath C:\path\to\app-debug.apk

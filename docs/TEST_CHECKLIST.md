@@ -3,9 +3,9 @@
 ## V0-A 离线与构建
 
 - [x] `scripts/v0_self_test.ps1` 覆盖脚本语法、ADB 设备选择、快照分析、六场景门禁和场景拒绝路径。
-- [x] Android 单元测试覆盖 `SafetyGate`、来电解析和拨出页面策略。
-- [x] GitHub Actions run `29695704802` 使用 JDK 17、Android SDK 35 和 Gradle 8.9 通过单元测试、Lint 和 debug 构建。
-- [ ] CI 使用 AAPT2 审计最终 debug APK：没有任何 `uses-permission`，编译后的无障碍配置只包含 `com.tencent.mm`。
+- [x] Android 单元测试覆盖 `SafetyGate`、来电解析和拨出页面策略（GitHub Actions run `29744349860`）。
+- [x] GitHub Actions run `29744349860` 使用 JDK 17、Android SDK 35 和 Gradle 8.9 通过单元测试、Lint 和 debug 构建。
+- [x] 同一 CI run 使用 AAPT2 审计最终 debug APK：没有任何 `uses-permission`，编译后的无障碍配置只包含 `com.tencent.mm`。
 - [ ] 本地或 CI 生成的可信 debug APK 已安装到目标手机。
 
 ## V0-A 目标与快照门禁
